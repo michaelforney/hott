@@ -43,3 +43,34 @@ _∙_ {i} {A} {x} {y} {z} p q = ind D d x y p z q where
   d : (x : A) → D x x refl
   d x z q = ind E e x z q
 infixl 20 _∙_
+
+-- Lemma 2.1.4
+--  (i)
+ru : ∀ {i} {A : 𝒰 i} {x y : A} (p : x == y) → p == p ∙ refl
+ru p rewrite p = refl
+lu : ∀ {i} {A : 𝒰 i} {x y : A} (p : x == y) → p == refl ∙ p
+lu p rewrite p = refl
+--  (iv)
+assoc : ∀ {i} {A : 𝒰 i} {x y z w : A}
+        (p : x == y) (q : y == z) (r : z == w) → p ∙ (q ∙ r) == (p ∙ q) ∙ r
+assoc p q r rewrite p | q | r = refl
+
+-- Lemma 2.2.1
+ap : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} {x y : A}
+     (f : A → B) → x == y → f x == f y
+ap f p rewrite p = refl
+
+-- Lemma 2.3.1
+transport : ∀ {i j} {A : 𝒰 i} {P : A → 𝒰 j} {x y : A}
+            (p : x == y) → P x → P y
+transport p x rewrite p = x
+
+-- Lemma 2.3.4
+apd : ∀ {i j} {A : 𝒰 i} {P : A → 𝒰 j} {x y : A}
+      (f : (x : A) → P x) (p : x == y) → transport p (f x) == f y
+apd f p rewrite p = refl
+
+-- Lemma 2.3.5
+transportconst : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} {x y : A}
+                 (p : x == y) (b : B) → transport p b == b
+transportconst p b rewrite p = refl
