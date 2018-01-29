@@ -9,6 +9,7 @@ record _×_ {i j} (A : 𝒰 i) (B : 𝒰 j) : 𝒰 (i ⊔ j) where
   field
     pr₁ : A
     pr₂ : B
+infixr 15 _,_
 
 rec : ∀ {i j k} {A : 𝒰 i} {B : 𝒰 j} (C : 𝒰 k) →
       (A → B → C) → A × B → C

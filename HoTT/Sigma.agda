@@ -8,6 +8,7 @@ record Σ {i j} (A : 𝒰 i) (B : A → 𝒰 j) : 𝒰 (i ⊔ j) where
   field
     pr₁ : A
     pr₂ : B pr₁
+infixr 15 _,_
 
 rec : ∀ {i j k} {A : 𝒰 i} {B : A → 𝒰 j} →
       (C : 𝒰 k) → ((x : A) → B x → C) → (Σ A λ x → B x) → C
