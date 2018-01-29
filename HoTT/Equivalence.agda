@@ -1,0 +1,47 @@
+module HoTT.Equivalence where
+
+open import Agda.Primitive
+open import HoTT.Universe
+open import HoTT.Identity
+open import HoTT.Sigma
+open import HoTT.Product
+open import HoTT.Function
+open import HoTT.Homotopy
+
+qinv : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} (f : A → B) → 𝒰 (i ⊔ j)
+qinv {_} {_} {A} {B} f = Σ (B → A) λ g → (f ∘ g ~ id) × (g ∘ f ~ id)
+
+isequiv : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} (f : A → B) → 𝒰 (i ⊔ j)
+isequiv {_} {_} {A} {B} f = (Σ (B → A) λ g → f ∘ g ~ id) × (Σ (B → A) λ h → h ∘ f ~ id)
+
+qinv→isequiv : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} {f : A → B} → qinv f → isequiv f
+qinv→isequiv (g , α , β) = (g , α) , (g , β)
+
+isequiv→qinv : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} {f : A → B} → isequiv f → qinv f
+isequiv→qinv {_} {_} {_} {_} {f} ((g , α) , (h , β)) = g , α , β'
+  where
+    γ : g ~ h
+    γ x = (β (g x))⁻¹ ∙ ap h (α x)
+    β' : g ∘ f ~ id
+    β' x = γ (f x) ∙ β x
+
+_≃_ : ∀ {i j} (A : 𝒰 i) (B : 𝒰 j) → 𝒰 (i ⊔ j)
+A ≃ B = Σ (A → B) λ f → isequiv f
+
+-- Lemma 2.4.12
+--  (i)
+≃-refl : ∀ {i} {A : 𝒰 i} → A ≃ A
+≃-refl = id , (id , λ x → refl) , (id , λ x → refl)
+--  (ii)
+≃-sym : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} → A ≃ B → B ≃ A
+≃-sym (f , e) with isequiv→qinv e
+... | g , α , β = g , (f , β) , (f , α)
+--  (iii)
+≃-trans : ∀ {i j k} {A : 𝒰 i} {B : 𝒰 j} {C : 𝒰 k} → A ≃ B → B ≃ C → A ≃ C
+≃-trans (f₁ , e₁) (f₂ , e₂) with isequiv→qinv e₁ | isequiv→qinv e₂
+... | g₁ , α₁ , β₁ | g₂ , α₂ , β₂ = (f₂ ∘ f₁) , qinv→isequiv (g₁ ∘ g₂ , α , β)
+  where
+    α : f₂ ∘ f₁ ∘ g₁ ∘ g₂ ~ id
+    α x = ap f₂ (α₁ (g₂ x)) ∙ α₂ x
+    β : g₁ ∘ g₂ ∘ f₂ ∘ f₁ ~ id
+    β x = ap g₁ (β₂ (f₁ x)) ∙ β₁ x
