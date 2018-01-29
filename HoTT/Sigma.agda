@@ -1,3 +1,4 @@
+{-# OPTIONS --without-K #-}
 module HoTT.Sigma where
 
 open import HoTT.Universe

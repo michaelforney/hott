@@ -1,3 +1,4 @@
+{-# OPTIONS --without-K #-}
 module HoTT.Boolean where
 
 open import HoTT.Universe

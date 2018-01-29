@@ -1,3 +1,4 @@
+{-# OPTIONS --without-K #-}
 module HoTT.Equivalence where
 
 open import Agda.Primitive

@@ -1,3 +1,4 @@
+{-# OPTIONS --without-K #-}
 module HoTT.Product where
 
 open import Agda.Primitive

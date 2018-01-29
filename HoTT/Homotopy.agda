@@ -1,3 +1,4 @@
+{-# OPTIONS --without-K #-}
 module HoTT.Homotopy where
 
 open import Agda.Primitive

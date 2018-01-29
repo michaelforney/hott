@@ -1,3 +1,4 @@
+{-# OPTIONS --without-K #-}
 module HoTT.Identity where
 
 open import HoTT.Universe
