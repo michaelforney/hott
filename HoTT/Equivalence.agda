@@ -1,16 +1,13 @@
 {-# OPTIONS --without-K #-}
 module HoTT.Equivalence where
 
-open import Agda.Primitive
-open import HoTT.Universe
-open import HoTT.Identity
-open import HoTT.Sigma
-open import HoTT.Product
+open import HoTT.Types
 open import HoTT.Function
+open import HoTT.Identity
 open import HoTT.Homotopy
 
 qinv : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} (f : A → B) → 𝒰 (i ⊔ j)
-qinv {_} {_} {A} {B} f = Σ (B → A) λ g → (f ∘ g ~ id) × (g ∘ f ~ id)
+qinv {A = A} {B} f = Σ (B → A) λ g → (f ∘ g ~ id) × (g ∘ f ~ id)
 
 isequiv : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} (f : A → B) → 𝒰 (i ⊔ j)
 isequiv {_} {_} {A} {B} f = (Σ (B → A) λ g → f ∘ g ~ id) × (Σ (B → A) λ h → h ∘ f ~ id)
@@ -19,7 +16,7 @@ qinv→isequiv : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} {f : A → B} → qinv f �
 qinv→isequiv (g , α , β) = (g , α) , (g , β)
 
 isequiv→qinv : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} {f : A → B} → isequiv f → qinv f
-isequiv→qinv {_} {_} {_} {_} {f} ((g , α) , (h , β)) = g , α , β'
+isequiv→qinv {f = f} ((g , α) , (h , β)) = g , α , β'
   where
     γ : g ~ h
     γ x = (β (g x))⁻¹ ∙ ap h (α x)

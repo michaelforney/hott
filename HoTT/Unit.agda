@@ -1,11 +1,7 @@
 {-# OPTIONS --without-K #-}
 module HoTT.Unit where
 
-open import HoTT.Universe
-open import HoTT.Identity hiding (ind)
-
-record 𝟏 : 𝒰₀ where
-  constructor ★
+open import HoTT.Types
 
 rec : ∀ {i} (C : 𝒰 i) → C → 𝟏 → C
 rec C c ★ = c

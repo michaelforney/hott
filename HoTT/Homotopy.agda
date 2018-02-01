@@ -1,8 +1,7 @@
 {-# OPTIONS --without-K #-}
 module HoTT.Homotopy where
 
-open import Agda.Primitive
-open import HoTT.Universe
+open import HoTT.Types
 open import HoTT.Identity
 
 _~_ : ∀ {i j} {A : 𝒰 i} {P : A → 𝒰 j} (f g : (x : A) → P x) → 𝒰 (i ⊔ j)

@@ -1,7 +1,7 @@
 {-# OPTIONS --without-K #-}
 module HoTT.Function where
 
-open import HoTT.Universe
+open import HoTT.Types
 
 id : ∀ {i} {A : 𝒰 i} → A → A
 id x = x

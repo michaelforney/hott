@@ -1,11 +1,6 @@
 module HoTT.Coproduct where
 
-open import Agda.Primitive
-open import HoTT.Universe
-
-data _+_ {i j} (A : 𝒰 i) (B : 𝒰 j) : 𝒰 (i ⊔ j) where
-  inl : A → A + B
-  inr : B → A + B
+open import HoTT.Types
 
 rec : ∀ {i j k} {A : 𝒰 i} {B : 𝒰 j} →
       (C : 𝒰 k) → (A → C) → (B → C) → A + B → C

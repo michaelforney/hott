@@ -1,8 +1,6 @@
 module HoTT.Empty where
 
-open import HoTT.Universe
-
-data 𝟎 : 𝒰₀ where
+open import HoTT.Types
 
 ¬ : ∀ {i} (A : 𝒰 i) → 𝒰 i
 ¬ A = A → 𝟎
