@@ -15,6 +15,10 @@ record Lift {i j} (A : 𝒰 j) : 𝒰 (i ⊔ j) where
   field lower : A
 open Lift public
 
+-- Pi
+Π : ∀ {i j} (A : 𝒰 i) (B : A → 𝒰 j) → 𝒰 (i ⊔ j)
+Π A B = (x : A) → B x
+
 -- Empty
 data 𝟎 : 𝒰₀ where
 
