@@ -1,3 +1,4 @@
+{-# OPTIONS --without-K #-}
 module HoTT.Empty where
 
 open import HoTT.Types
