@@ -15,7 +15,7 @@ open import HoTT.Identity
 
 Σ-up : ∀ {i j} {A : 𝒰 i} {B : A → 𝒰 j}
          (x : Σ A B) → pr₁ x , pr₂ x == x
-Σ-up _ = refl
+Σ-up = Σ-ind (λ x → pr₁ x , pr₂ x == x) (λ _ _ → refl)
 
 pair⁼ : ∀ {i j} {A : 𝒰 i} {P : A → 𝒰 j} {w w' : Σ A P} →
         Σ (pr₁ w == pr₁ w') (λ p → transport p (pr₂ w) == pr₂ w') → w == w'
