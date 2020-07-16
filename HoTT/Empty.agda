@@ -3,8 +3,9 @@ module HoTT.Empty where
 
 open import HoTT.Types
 
-¬ : ∀ {i} (A : 𝒰 i) → 𝒰 i
-¬ A = A → 𝟎
+¬_ : ∀ {i} (A : 𝒰 i) → 𝒰 i
+¬_ A = A → 𝟎
+infix 25 ¬_
 
 rec : ∀ {i} (C : 𝒰 i) → 𝟎 → C
 rec C ()

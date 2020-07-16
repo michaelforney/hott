@@ -2,7 +2,7 @@
 module HoTT.Identity where
 
 open import HoTT.Types
-open import HoTT.Empty using (¬)
+open import HoTT.Empty using (¬_)
 
 =-ind : ∀ {i j} {A : 𝒰 i} →
         (C : (x y : A) → x == y → 𝒰 j) → ((x : A) → C x x refl) → (x y : A) → (p : x == y) → C x y p
