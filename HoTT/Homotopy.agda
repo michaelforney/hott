@@ -4,9 +4,6 @@ module HoTT.Homotopy where
 open import HoTT.Types
 open import HoTT.Identity
 
-_~_ : ∀ {i j} {A : 𝒰 i} {P : A → 𝒰 j} (f g : (x : A) → P x) → 𝒰 (i ⊔ j)
-_~_ {_} {_} {A} {_} f g = (x : A) → f x == g x
-
 -- Lemma 2.4.2
 ~-refl : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j}
          (f : A → B) → f ~ f

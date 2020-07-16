@@ -2,15 +2,8 @@
 module HoTT.Equivalence where
 
 open import HoTT.Types
-open import HoTT.Function
 open import HoTT.Identity
 open import HoTT.Homotopy
-
-qinv : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} (f : A → B) → 𝒰 (i ⊔ j)
-qinv {A = A} {B} f = Σ (B → A) λ g → (f ∘ g ~ id) × (g ∘ f ~ id)
-
-isequiv : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} (f : A → B) → 𝒰 (i ⊔ j)
-isequiv {_} {_} {A} {B} f = (Σ (B → A) λ g → f ∘ g ~ id) × (Σ (B → A) λ h → h ∘ f ~ id)
 
 qinv→isequiv : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} {f : A → B} → qinv f → isequiv f
 qinv→isequiv (g , α , β) = (g , α) , (g , β)
@@ -22,9 +15,6 @@ isequiv→qinv {f = f} ((g , α) , (h , β)) = g , α , β'
     γ x = (β (g x))⁻¹ ∙ ap h (α x)
     β' : g ∘ f ~ id
     β' x = γ (f x) ∙ β x
-
-_≃_ : ∀ {i j} (A : 𝒰 i) (B : 𝒰 j) → 𝒰 (i ⊔ j)
-A ≃ B = Σ (A → B) λ f → isequiv f
 
 -- Lemma 2.4.12
 --  (i)
