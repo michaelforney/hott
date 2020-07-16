@@ -113,7 +113,7 @@ module Exercise6 where
   prop : ∀ {i j k} {A : 𝒰 i} {B : 𝒰 j}
            {C : A ×' B → 𝒰 k} {g : (a : A) (b : B) → C (a ,' b)} {a : A} {b : B} →
          ×'-ind C g (a ,' b) == g a b
-  prop {C = C} {g} {a} {b} = ap (λ p → transport {P = C} p (g a b)) (linv {p = ×'-up (a ,' b)})
+  prop {C = C} {g} {a} {b} = ap (λ p → transport {P = C} p (g a b)) (linv (×'-up (a ,' b)))
 
 module Exercise7 where
   open import HoTT.Sigma
