@@ -211,7 +211,6 @@ module Exercise9 {i j} {A : 𝒰 i} {B : 𝒰 j} where
     β : g ∘ f ~ id
     β h = funext λ{(inl _) → refl ; (inr _) → refl}
 
-
   prop₂ : ∀ {k} {P : A + B → 𝒰 k} →
           ((x : A + B) → P x) ≃ ((a : A) → P (inl a)) × ((b : B) → P (inr b))
   prop₂ {P = P} = f , qinv→isequiv (g , α , β)
@@ -225,3 +224,39 @@ module Exercise9 {i j} {A : 𝒰 i} {B : 𝒰 j} where
     α _ = refl
     β : g ∘ f ~ id
     β h = funext λ{(inl _) → refl ; (inr _) → refl}
+
+module Exercise10 {i j k} {A : 𝒰 i} {B : A → 𝒰 j} {C : Σ A B → 𝒰 k}
+  where
+  open import HoTT.Equivalence
+
+  _ : (Σ A λ x → Σ (B x) λ y → C (x , y)) ≃ (Σ (Σ A B) λ p → C p)
+  _ = f , qinv→isequiv (g , (λ _ → refl) , (λ _ → refl))
+    where
+    f : (Σ A λ x → Σ (B x) λ y → C (x , y)) → (Σ (Σ A B) λ p → C p)
+    f (x , y , z) = (x , y) , z
+    g : (Σ (Σ A B) λ p → C p) → (Σ A λ x → Σ (B x) λ y → C (x , y))
+    g ((x , y) , z) = x , y , z
+
+module Exercise11 {i j k} {A : 𝒰 i} {B : 𝒰 j} {C : 𝒰 k} {f : A → C} {g : B → C}
+  where
+  open import HoTT.Equivalence
+  open import HoTT.Pi
+  open import HoTT.Sigma
+
+  pullback : ∀ {i j k} (A : 𝒰 i) (B : 𝒰 j) {C : 𝒰 k} {f : A → C} {g : B → C} → 𝒰 _
+  pullback A B {f = f} {g} = Σ A λ a → Σ B λ b → f a == g b
+
+  P : 𝒰 (i ⊔ j ⊔ k)
+  P = pullback A B {C} {f} {g}
+
+  prop : ∀ {l} {X : 𝒰 l} → (X → P) ≃ pullback (X → A) (X → B)
+  prop {X = X} = to , qinv→isequiv (from , α , β)
+    where
+    to : (X → P) → pullback (X → A) (X → B)
+    to s = pr₁ ∘ s , pr₁ ∘ pr₂ ∘ s , funext (pr₂ ∘ pr₂ ∘ s)
+    from : pullback (X → A) (X → B) → (X → P)
+    from (h' , k' , p) x = h' x , k' x , happly p x
+    α : to ∘ from ~ id
+    α (_ , _ , p) = pair⁼ (refl , pair⁼ (refl , Π-identity-η p))
+    β : from ∘ to ~ id
+    β s = funext λ x → pair⁼ (refl , pair⁼ (refl , happly (Π-identity-β (pr₂ ∘ pr₂ ∘ s)) x))
