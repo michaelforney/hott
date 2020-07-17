@@ -10,9 +10,9 @@ module _ {i j} {A : 𝒰 i} {B : A → 𝒰 j} {f g : Π A B} where
 
   postulate
     funext : f ~ g → f == g
-    Π-identity-η : happly ∘ funext ~ id
-    Π-identity-β : funext ∘ happly ~ id
+    Π-identity-β : happly ∘ funext ~ id
+    Π-identity-η : funext ∘ happly ~ id
 
   -- Axiom 2.9.3
   _ : (f == g) ≃ (f ~ g)
-  _ = happly , (funext , Π-identity-η) , (funext , Π-identity-β)
+  _ = happly , (funext , Π-identity-β) , (funext , Π-identity-η)
