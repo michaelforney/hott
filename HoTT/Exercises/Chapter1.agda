@@ -97,18 +97,24 @@ module Exercise6 where
          A → B → A ×' B
   a ,' b = λ{0₂ → lift a ; 1₂ → lift b}
 
+  pr₁' : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} → A ×' B → A
+  pr₁' x = lower (x 0₂)
+
+  pr₂' : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} → A ×' B → B
+  pr₂' x = lower (x 1₂)
+
   ×'-up : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} →
-          (x : A ×' B) → lower (x 0₂) ,' lower (x 1₂) == x
+          (x : A ×' B) → pr₁' x ,' pr₂' x == x
   ×'-up x = funext λ{0₂ → refl ; 1₂ → refl}
 
   -- Based on solution from https://github.com/pcapriotti/hott-exercises/blob/master/chapter1/ex6.agda
   ×'-up-compute : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} →
-                  (x : A ×' B) → lower (x 0₂) ,' lower (x 1₂) == x
-  ×'-up-compute x = (×'-up (lower (x 0₂) ,' lower (x 1₂))) ⁻¹ ∙ ×'-up x
+                  (x : A ×' B) → pr₁' x ,' pr₂' x == x
+  ×'-up-compute x = (×'-up (pr₁' x ,' pr₂' x)) ⁻¹ ∙ ×'-up x
 
   ×'-ind : ∀ {i j k} {A : 𝒰 i} {B : 𝒰 j} →
            (C : A ×' B → 𝒰 k) → ((a : A) (b : B) → C (a ,' b)) → (x : A ×' B) → C x
-  ×'-ind C g x = transport {P = C} (×'-up-compute x) (g (lower (x 0₂)) (lower (x 1₂)))
+  ×'-ind C g x = transport {P = C} (×'-up-compute x) (g (pr₁' x) (pr₂' x))
 
   prop : ∀ {i j k} {A : 𝒰 i} {B : 𝒰 j}
            {C : A ×' B → 𝒰 k} {g : (a : A) (b : B) → C (a ,' b)} {a : A} {b : B} →
