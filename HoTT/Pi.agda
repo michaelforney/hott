@@ -1,3 +1,4 @@
+{-# OPTIONS --without-K #-}
 module HoTT.Pi where
 
 open import HoTT.Types

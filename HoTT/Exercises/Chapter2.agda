@@ -174,3 +174,54 @@ module Exercise7 {i j k l} {A : 𝒰 i} {A' : 𝒰 j} {B : A → 𝒰 k} {B' : A
       (ap g p , Lemma2/3/10 p (h x₁ x₂) ⁻¹ ∙ Lemma2/3/11 {f = h} p x₂ ∙ ap (h y₁) q)
     d : (x₁ : A) → D x₁ x₁ refl
     d x₁ x₂ y₂ q = =-ind E e x₂ y₂ q
+
+module Exercise8 {i j k l} {A : 𝒰 i} {B : 𝒰 j} {A' : 𝒰 k} {B' : 𝒰 l}
+                 {g : A → A'} {h : B → B'} where
+  open import HoTT.Coproduct
+
+  f : A + B → A' + B'
+  f = +-rec (A' + B') (inl ∘ g) (inr ∘ h)
+
+  prop : {x y : A + B} {p : code x y} →
+         ap f (decode p) == decode (+-ind (λ x → (y : A + B) → code x y → code (f x) (f y))
+           (λ a y p → +-ind (λ y → code (inl a) y → code (f (inl a)) (f y))
+             (λ a' (lift p) → lift (ap g p)) (λ b' (lift p) → (lift p)) y p)
+           (λ b y p → +-ind (λ y → code (inr b) y → code (f (inr b)) (f y))
+             (λ a' (lift p) → lift p) (λ b' (lift p) → lift (ap h p)) y p)
+           x y p)
+  prop {inl a} {inl .a} {lift refl} = refl
+  prop {inl _} {inr _} {lift ()}
+  prop {inr _} {inl _} {lift ()}
+  prop {inr b} {inr .b} {lift refl} = refl
+
+module Exercise9 {i j} {A : 𝒰 i} {B : 𝒰 j} where
+  open import HoTT.Equivalence
+  open import HoTT.Pi
+
+  prop₁ : ∀ {k} {X : 𝒰 k} → (A + B → X) ≃ (A → X) × (B → X)
+  prop₁ {X = X} = f , qinv→isequiv (g , α , β)
+    where
+    f : (A + B → X) → (A → X) × (B → X)
+    f h = h ∘ inl , h ∘ inr
+    g : (A → X) × (B → X) → (A + B → X)
+    g (h , _) (inl a) = h a
+    g (_ , h) (inr b) = h b
+    α : f ∘ g ~ id
+    α _ = refl
+    β : g ∘ f ~ id
+    β h = funext λ{(inl _) → refl ; (inr _) → refl}
+
+
+  prop₂ : ∀ {k} {P : A + B → 𝒰 k} →
+          ((x : A + B) → P x) ≃ ((a : A) → P (inl a)) × ((b : B) → P (inr b))
+  prop₂ {P = P} = f , qinv→isequiv (g , α , β)
+    where
+    f : ((x : A + B) → P x) → ((a : A) → P (inl a)) × ((b : B) → P (inr b))
+    f h = (h ∘ inl) , h ∘ inr
+    g : ((a : A) → P (inl a)) × ((b : B) → P (inr b)) → ((x : A + B) → P x)
+    g (h , _) (inl a) = h a
+    g (_ , h) (inr b) = h b
+    α : f ∘ g ~ id
+    α _ = refl
+    β : g ∘ f ~ id
+    β h = funext λ{(inl _) → refl ; (inr _) → refl}
