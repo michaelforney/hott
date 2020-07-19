@@ -80,11 +80,22 @@ _~_ : ∀ {i j} {A : 𝒰 i} {P : A → 𝒰 j} (f g : Π A P) → 𝒰 (i ⊔ j
 _~_ {A = A} f g = (x : A) → f x == g x
 
 -- Equivalence
-qinv : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} (f : A → B) → 𝒰 (i ⊔ j)
-qinv {A = A} {B} f = Σ (B → A) λ g → (f ∘ g ~ id) × (g ∘ f ~ id)
+module _ {i j} {A : 𝒰 i} {B : 𝒰 j} (f : A → B)
+  where
+  qinv : 𝒰 (i ⊔ j)
+  qinv = Σ (B → A) λ g → (f ∘ g ~ id) × (g ∘ f ~ id)
 
-isequiv : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} (f : A → B) → 𝒰 (i ⊔ j)
-isequiv {_} {_} {A} {B} f = (Σ (B → A) λ g → f ∘ g ~ id) × (Σ (B → A) λ h → h ∘ f ~ id)
+  linv : 𝒰 (i ⊔ j)
+  linv = Σ (B → A) λ g → g ∘ f ~ id
+
+  rinv : 𝒰 (i ⊔ j)
+  rinv = Σ (B → A) λ g → f ∘ g ~ id
+
+  biinv : 𝒰 (i ⊔ j)
+  biinv = linv × rinv
+
+  isequiv : 𝒰 (i ⊔ j)
+  isequiv = rinv × linv
 
 _≃_ : ∀ {i j} (A : 𝒰 i) (B : 𝒰 j) → 𝒰 (i ⊔ j)
 A ≃ B = Σ (A → B) λ f → isequiv f

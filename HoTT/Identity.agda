@@ -48,11 +48,11 @@ lu : ∀ {i} {A : 𝒰 i} {x y : A} (p : x == y) → p == refl ∙ p
 lu {x = x} {y} p = =-ind (λ _ _ p → p == refl ∙ p) (λ _ → refl) x y p
 
 --  (ii)
-linv : ∀ {i} {A : 𝒰 i} {x y : A} (p : x == y) → p ⁻¹ ∙ p == refl
-linv {x = x} {y} p = =-ind (λ _ _ p → p ⁻¹ ∙ p == refl) (λ _ → refl) x y p
+=-linv : ∀ {i} {A : 𝒰 i} {x y : A} (p : x == y) → p ⁻¹ ∙ p == refl
+=-linv {x = x} {y} p = =-ind (λ _ _ p → p ⁻¹ ∙ p == refl) (λ _ → refl) x y p
 
-rinv : ∀ {i} {A : 𝒰 i} {x y : A} (p : x == y) → p ∙ p ⁻¹ == refl
-rinv {x = x} {y} p = =-ind (λ _ _ p → p ∙ p ⁻¹ == refl) (λ _ → refl) x y p
+=-rinv : ∀ {i} {A : 𝒰 i} {x y : A} (p : x == y) → p ∙ p ⁻¹ == refl
+=-rinv {x = x} {y} p = =-ind (λ _ _ p → p ∙ p ⁻¹ == refl) (λ _ → refl) x y p
 
 --  (iv)
 assoc : ∀ {i} {A : 𝒰 i} {x y z w : A} (p : x == y) (q : y == z) (r : z == w) →

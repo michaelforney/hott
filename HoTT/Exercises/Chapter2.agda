@@ -128,18 +128,18 @@ module Exercise5 {i j} {A : 𝒰 i} {B : 𝒰 j} {x y : A} {p : x == y} {f : A �
     h = transportconst p (f x) ⁻¹ ∙_
     α : (g ∘ h) ~ id
     α q = assoc (transportconst p (f x)) (transportconst p (f x) ⁻¹) q ∙
-          ap (_∙ q) (rinv (transportconst p (f x))) ∙ lu q ⁻¹
+          ap (_∙ q) (=-rinv (transportconst p (f x))) ∙ lu q ⁻¹
     β : (h ∘ g) ~ id
     β q = assoc (transportconst p (f x) ⁻¹) (transportconst p (f x))q ∙
-          ap (_∙ q) (linv (transportconst p (f x))) ∙ lu q ⁻¹
+          ap (_∙ q) (=-linv (transportconst p (f x))) ∙ lu q ⁻¹
 
 module Exercise6 {i} {A : 𝒰 i} {x y z : A} {p : x == y} where
   open import HoTT.Equivalence
 
   prop : y == z ≃ x == z
   prop = (p ∙_) , qinv→isequiv (p ⁻¹ ∙_ ,
-     (λ q → assoc p (p ⁻¹) q ∙ ap (_∙ q) (rinv p) ∙ lu q ⁻¹) ,
-     (λ q → assoc (p ⁻¹) p q ∙ ap (_∙ q) (linv p) ∙ lu q ⁻¹))
+     (λ q → assoc p (p ⁻¹) q ∙ ap (_∙ q) (=-rinv p) ∙ lu q ⁻¹) ,
+     (λ q → assoc (p ⁻¹) p q ∙ ap (_∙ q) (=-linv p) ∙ lu q ⁻¹))
 
 module Exercise7 {i j k l} {A : 𝒰 i} {A' : 𝒰 j} {B : A → 𝒰 k} {B' : A' → 𝒰 l}
                  {g : A → A'} {h : (x : A) → B x → B' (g x)} where
