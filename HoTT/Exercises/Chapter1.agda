@@ -229,8 +229,8 @@ module Exercise8 where
   *-rdistrib : {a b c : ℕ} → (a + b) * c == (a * c) + (b * c)
   *-rdistrib {a} {b} {c} = *-commute {a + b} {c} ∙
                            *-ldistrib {c} {a} {b} ∙
-                           ap (λ x → x + (c * b)) (*-commute {c} {a}) ∙
-                           ap (λ x → (a * c) + x) (*-commute {c} {b})
+                           ap (_+ (c * b)) (*-commute {c} {a}) ∙
+                           ap ((a * c) +_) (*-commute {c} {b})
 
   *-assoc : {a b c : ℕ} → (a * b) * c == a * (b * c)
   *-assoc {a} {b} {c} = ℕ-ind D d₀ dₛ a
@@ -240,7 +240,7 @@ module Exercise8 where
     d₀ : D 0
     d₀ = refl
     dₛ : (n : ℕ) → D n → D (succ n)
-    dₛ n p = *-rdistrib {b} {n * b} {c} ∙ ap (λ x → (b * c) + x) p
+    dₛ n p = *-rdistrib {b} {n * b} {c} ∙ ap ((b * c) +_) p
 
 module Exercise9 where
   open import HoTT.NaturalNumber
