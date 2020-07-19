@@ -9,10 +9,10 @@ open import HoTT.Identity
          (f : A → B) → f ~ f
 ~-refl f x = refl
 
-~-sym : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j}
-        (f g : A → B) → f ~ g → g ~ f
-~-sym f g H x = (H x)⁻¹
+~-sym : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} {f g : A → B} →
+        f ~ g → g ~ f
+~-sym H x = (H x)⁻¹
 
-~-trans : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j}
-          (f g h : A → B) → f ~ g → g ~ h → f ~ h
-~-trans f g h H₁ H₂ x = H₁ x ∙ H₂ x
+~-trans : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} {f g h : A → B} →
+          f ~ g → g ~ h → f ~ h
+~-trans H₁ H₂ x = H₁ x ∙ H₂ x
