@@ -13,9 +13,9 @@ open import HoTT.Identity
         (C : Σ A B → 𝒰 k) → ((a : A) → (b : B a) → C (a , b)) → (p : Σ A B) → C p
 Σ-ind C g (a , b) = g a b
 
-Σ-up : ∀ {i j} {A : 𝒰 i} {B : A → 𝒰 j}
+Σ-uniq : ∀ {i j} {A : 𝒰 i} {B : A → 𝒰 j}
          (x : Σ A B) → pr₁ x , pr₂ x == x
-Σ-up = Σ-ind (λ x → pr₁ x , pr₂ x == x) (λ _ _ → refl)
+Σ-uniq = Σ-ind (λ x → pr₁ x , pr₂ x == x) (λ _ _ → refl)
 
 pair⁼ : ∀ {i j} {A : 𝒰 i} {P : A → 𝒰 j} {w w' : Σ A P} →
         Σ (pr₁ w == pr₁ w') (λ p → transport p (pr₂ w) == pr₂ w') → w == w'

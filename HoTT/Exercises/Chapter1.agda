@@ -29,16 +29,16 @@ module Exercise2 where
   _ = refl
 
 module Exercise3 where
-  open import HoTT.Product using (×-up)
-  open import HoTT.Sigma using (Σ-up)
+  open import HoTT.Product using (×-uniq)
+  open import HoTT.Sigma using (Σ-uniq)
 
   ×-ind : ∀ {i} {A B : 𝒰 i}
            (C : A × B → 𝒰 i) → ((a : A) → (b : B) → C (a , b)) → (x : A × B) → C x
-  ×-ind C g x = transport {P = C} (×-up x) (g (pr₁ x) (pr₂ x))
+  ×-ind C g x = transport {P = C} (×-uniq x) (g (pr₁ x) (pr₂ x))
 
   Σ-ind : ∀ {i} {A : 𝒰 i} {B : A → 𝒰 i}
           (C : Σ A B → 𝒰 i) → ((a : A) → (b : B a) → C (a , b)) → (x : Σ A B) → C x
-  Σ-ind C g x = transport {P = C} (Σ-up x) (g (pr₁ x) (pr₂ x))
+  Σ-ind C g x = transport {P = C} (Σ-uniq x) (g (pr₁ x) (pr₂ x))
 
 module Exerecise4 where
   iter : ∀ {i} (C : 𝒰 i) → C → (C → C) → ℕ → C
