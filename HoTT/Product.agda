@@ -8,7 +8,7 @@ open import HoTT.Equivalence
         (C : 𝒰 k) → (A → B → C) → A × B → C
 ×-rec _ g (a , b) = g a b
 
-×-ind : ∀ {i j k} {A : 𝒰 i} {B : 𝒰 j} {C : 𝒰 k}
+×-ind : ∀ {i j k} {A : 𝒰 i} {B : 𝒰 j}
         (C : A × B → 𝒰 k) → ((x : A) (y : B) → C (x , y)) → (x : A × B) → C x
 ×-ind _ g (a , b) = g a b
 
