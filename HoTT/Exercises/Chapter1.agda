@@ -88,7 +88,7 @@ module Exercise5 where
 
 module Exercise6 where
   open import HoTT.Boolean
-  open import HoTT.Pi
+  open import HoTT.Pi.Identity
 
   _×'_ : ∀ {i j} → 𝒰 i → 𝒰 j → 𝒰 (i ⊔ j)
   _×'_ {i} {j} A B = (x : 𝟐) → 𝟐-rec (𝒰 (i ⊔ j)) (Lift {j} A) (Lift {i} B) x
@@ -135,7 +135,7 @@ module Exercise6 where
   -}
 
 module Exercise7 where
-  open import HoTT.Sigma
+  open import HoTT.Sigma.Identity
 
   -- TODO: Using Lemma 3.11.8 might simplify this.
   =-ind' : ∀ {i j} {A : 𝒰 i} →

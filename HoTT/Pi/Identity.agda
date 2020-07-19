@@ -1,5 +1,5 @@
 {-# OPTIONS --without-K #-}
-module HoTT.Pi where
+module HoTT.Pi.Identity where
 
 open import HoTT.Types
 

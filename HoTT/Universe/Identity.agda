@@ -1,5 +1,5 @@
 {-# OPTIONS --without-K #-}
-module HoTT.Universe where
+module HoTT.Universe.Identity where
 
 open import HoTT.Types
 open import HoTT.Identity

@@ -143,7 +143,7 @@ module Exercise6 {i} {A : 𝒰 i} {x y z : A} {p : x == y} where
 
 module Exercise7 {i j k l} {A : 𝒰 i} {A' : 𝒰 j} {B : A → 𝒰 k} {B' : A' → 𝒰 l}
                  {g : A → A'} {h : (x : A) → B x → B' (g x)} where
-  open import HoTT.Sigma
+  open import HoTT.Sigma.Identity
 
   Lemma2/3/10 : ∀ {i j k} {A : 𝒰 i} {B : 𝒰 j} {P : B → 𝒰 k} {f : A → B} {x y : A} (p : x == y) (u : P (f x)) →
                 transport {P = P ∘ f} p u == transport {P = P} (ap f p) u
@@ -196,7 +196,7 @@ module Exercise8 {i j k l} {A : 𝒰 i} {B : 𝒰 j} {A' : 𝒰 k} {B' : 𝒰 l}
 
 module Exercise9 {i j} {A : 𝒰 i} {B : 𝒰 j} where
   open import HoTT.Equivalence
-  open import HoTT.Pi
+  open import HoTT.Pi.Identity
 
   prop₁ : ∀ {k} {X : 𝒰 k} → (A + B → X) ≃ (A → X) × (B → X)
   prop₁ {X = X} = f , qinv→isequiv (g , α , β)
@@ -240,8 +240,8 @@ module Exercise10 {i j k} {A : 𝒰 i} {B : A → 𝒰 j} {C : Σ A B → 𝒰 k
 module Exercise11 {i j k} {A : 𝒰 i} {B : 𝒰 j} {C : 𝒰 k} {f : A → C} {g : B → C}
   where
   open import HoTT.Equivalence
-  open import HoTT.Pi
-  open import HoTT.Sigma
+  open import HoTT.Pi.Identity
+  open import HoTT.Sigma.Identity
 
   pullback : ∀ {i j k} (A : 𝒰 i) (B : 𝒰 j) {C : 𝒰 k} {f : A → C} {g : B → C} → 𝒰 _
   pullback A B {f = f} {g} = Σ A λ a → Σ B λ b → f a == g b
