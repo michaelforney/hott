@@ -2,8 +2,6 @@
 module HoTT.Pi where
 
 open import HoTT.Types
-open import HoTT.Equivalence
-open import HoTT.Homotopy
 
 module _ {i j} {A : 𝒰 i} {B : A → 𝒰 j} {f g : Π A B} where
   happly : f == g → f ~ g

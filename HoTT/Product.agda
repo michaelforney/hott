@@ -3,7 +3,6 @@ module HoTT.Product where
 
 open import HoTT.Types
 open import HoTT.Equivalence
-open import HoTT.Homotopy
 
 ×-rec : ∀ {i j k} {A : 𝒰 i} {B : 𝒰 j}
         (C : 𝒰 k) → (A → B → C) → A × B → C

@@ -3,7 +3,6 @@ module HoTT.Coproduct where
 
 open import HoTT.Types
 open import HoTT.Equivalence
-open import HoTT.Homotopy
 open import HoTT.Identity using (ap ; transport)
 
 +-rec : ∀ {i j k} {A : 𝒰 i} {B : 𝒰 j} →
