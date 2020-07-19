@@ -272,6 +272,11 @@ module Exercise13
   not : 𝟐 → 𝟐
   not = 𝟐-rec 𝟐 1₂ 0₂
 
+  -- There are two possibilities for 2 ≃ 2, id and not. In our
+  -- equivalence (𝟐 ≃ 𝟐) ≃ 𝟐, we associate `id` with 0₂, and `not`
+  -- with 1₂. For some f : 𝟐 ≃ 𝟐, we have f 0₂ = 0₂ when f is id,
+  -- and f 0₂ = 1₂ when f is not, so we can use f 0₂ in the forward
+  -- direction.
   _ : (𝟐 ≃ 𝟐) ≃ 𝟐
   _ = to , qinv→isequiv (from , α , β)
     where
@@ -281,8 +286,22 @@ module Exercise13
     from = 𝟐-rec _
       (id , qinv→isequiv (id , (λ _ → refl) , λ _ → refl))
       (not , qinv→isequiv (not , 𝟐-ind _ refl refl , 𝟐-ind _ refl refl))
+    -- The first homotopy is easy, we just do 𝟐-induction on the
+    -- input to determine whether we have `id` or `not`. Once we
+    -- know that, it is just a matter of showing 0₂ = 0₂ or 1₂ = 1₂,
+    -- both of which are true by reflection.
     α : to ∘ from ~ id
     α = 𝟐-ind _ refl refl
+    -- The second homotopy is much trickier since we have to show
+    -- that these two complex structures are the same. The approach
+    -- we use is to induct on the four possibilities for f 0₂ and
+    -- f 1₂ (0₂ 0₂, 0₂ 1₂, 1₂ 0₂, or 1₂ 1₂). In the induction goals,
+    -- we require proofs that the boolean we induct on is equal
+    -- to f 0₂ or f 1₂ respectively. These proofs can be used
+    -- directly for the case where f = id or f = not. The other two
+    -- cases are impossible unless 0₂ = 1₂, and we can use the
+    -- proofs together with the equivalence inverse function and
+    -- homotopy to show the desired behavior of f.
     β : from ∘ to ~ id
     β e = let f = pr₁ e
               h = pr₁ (pr₂ (pr₂ e))
