@@ -260,3 +260,40 @@ module Exercise11 {i j k} {A : 𝒰 i} {B : 𝒰 j} {C : 𝒰 k} {f : A → C} {
     α (_ , _ , p) = pair⁼ (refl , pair⁼ (refl , Π-identity-η p))
     β : from ∘ to ~ id
     β s = funext λ x → pair⁼ (refl , pair⁼ (refl , happly (Π-identity-β (pr₂ ∘ pr₂ ∘ s)) x))
+
+module Exercise13
+  where
+  open import HoTT.Boolean
+  open import HoTT.Equivalence
+  open import HoTT.Pi.Identity
+  open import HoTT.Sigma.Identity
+  open import HoTT.Equivalence.Proposition
+
+  not : 𝟐 → 𝟐
+  not = 𝟐-rec 𝟐 1₂ 0₂
+
+  _ : (𝟐 ≃ 𝟐) ≃ 𝟐
+  _ = to , qinv→isequiv (from , α , β)
+    where
+    to : 𝟐 ≃ 𝟐 → 𝟐
+    to e = (pr₁ e) 0₂
+    from : 𝟐 → 𝟐 ≃ 𝟐
+    from = 𝟐-rec _
+      (id , qinv→isequiv (id , (λ _ → refl) , λ _ → refl))
+      (not , qinv→isequiv (not , 𝟐-ind _ refl refl , 𝟐-ind _ refl refl))
+    α : to ∘ from ~ id
+    α = 𝟐-ind _ refl refl
+    β : from ∘ to ~ id
+    β e = let f = pr₁ e
+              h = pr₁ (pr₂ (pr₂ e))
+              H = pr₂ (pr₂ (pr₂ e)) in
+      pair⁼ (𝟐-ind (λ x → x == f 0₂ → pr₁ (from x) == f)
+        (λ p → 𝟐-ind (λ x → x == f 1₂ → id == f)
+          (λ q → funext (𝟐-ind _ p (H 1₂ ⁻¹ ∙ ap h (q ⁻¹ ∙ p) ∙ H 0₂ ∙ q)))
+          (λ q → funext (𝟐-ind _ p q))
+          (f 1₂) refl)
+        (λ p → 𝟐-ind (λ x → x == f 1₂ → not == f)
+          (λ q → funext (𝟐-ind _ p q))
+          (λ q → funext (𝟐-ind _ p (H 0₂ ⁻¹ ∙ ap h (p ⁻¹ ∙ q) ∙ H 1₂ ∙ q)))
+          (f 1₂) refl)
+        (f 0₂) refl , isequiv-isProp _ _)
