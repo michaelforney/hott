@@ -14,8 +14,8 @@ pair⁼ {x = _ , _} {_ , _} (refl , refl) = refl
 ×-identity {_} {_} {A} {B} {x} {y} = f , qinv→isequiv (pair⁼ , α , β)
   where
     f : {x y : A × B} → x == y → (pr₁ x == pr₁ y) × (pr₂ x == pr₂ y)
-    f p rewrite p = refl , refl
+    f refl = refl , refl
     α : {x y : A × B} → f ∘ pair⁼ {x = x} {y} ~ id
-    α {a , b} {a' , b'} (p , q) rewrite p | q = refl
+    α {_ , _} {_ , _} (refl , refl) = refl
     β : {x y : A × B} → pair⁼ ∘ f {x} {y} ~ id
-    β r rewrite r = refl
+    β refl = refl
