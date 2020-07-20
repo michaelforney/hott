@@ -370,6 +370,10 @@ module Exercise17 {i}
     P : A → 𝒰 i
     P' : A' → 𝒰 i
 
+  prop : (_⊙_ : 𝒰 i → 𝒰 i → 𝒰 i) → A == A' → B == B' → (A ⊙ B) ≃ (A' ⊙ B')
+  prop {A} {A'} {B} {B'} (_⊙_) p q = transport {P = λ (A' , B') → A ⊙ B ≃ A' ⊙ B'}
+    (pair⁼ (p , q)) (idtoeqv refl)
+
   module _ (e₁ : A ≃ A') (e₂ : B ≃ B')
     where
     -- (i) Proof without using univalence
@@ -384,20 +388,21 @@ module Exercise17 {i}
         , (λ (a , b) → pair⁼ (β₁ a , β₂ b)) )
 
     -- (ii) Proof using univalence (for general operator)
-    prop : (_⊙_ : 𝒰 i → 𝒰 i → 𝒰 i) → (A ⊙ B) ≃ (A' ⊙ B')
-    prop (_⊙_) = =-ind' A (λ A' _ → (A ⊙ B) ≃ (A' ⊙ B'))
-      (=-ind' B (λ B' _ → (A ⊙ B) ≃ (A ⊙ B')) (idtoeqv refl) B' (ua e₂))
-      A' (ua e₁)
-
-    prop-× = prop _×_
-
-    -- TODO: Proofs of (i) and (ii) are equal
-    postulate
-      _ : prop-×' == prop-×
+    prop-× = prop _×_ (ua e₁) (ua e₂)
 
     -- (iii) Proof for non-dependent type formers (→, +)
-    prop-→ = prop (λ A B → A → B)
-    prop-+ = prop _+_
+    prop-→ = prop (λ A B → A → B) (ua e₁) (ua e₂)
+    prop-+ = prop _+_ (ua e₁) (ua e₂)
+
+  -- Proof that (i) and (ii) are equal
+  propᵢ₌ᵢᵢ : (e₁ : A ≃ A') (e₂ : B ≃ B') → prop-×' e₁ e₂ == prop-× e₁ e₂
+  propᵢ₌ᵢᵢ {A} {A'} {B} {B'} e₁ e₂ = transport {P = λ (e₁ , e₂) → prop-×' e₁ e₂ == prop-× e₁ e₂}
+    (pair⁼ (𝒰-identity-β e₁ , 𝒰-identity-β e₂))
+    (=-ind' A (λ _ p → prop-×' (idtoeqv p) (idtoeqv (ua e₂)) == prop-× (idtoeqv p) (idtoeqv (ua e₂)))
+      (=-ind' B (λ _ q → prop-×' _ (idtoeqv q) == prop-× _ (idtoeqv q))
+        (refl ∙ ap (λ (p , q) → prop _×_ p q) (pair⁼ (𝒰-identity-η refl ⁻¹ , 𝒰-identity-η refl ⁻¹)))
+        B' (ua e₂))
+      A' (ua e₁))
 
   module _ (e₁ : A ≃ A') (e₂ : transport {P = λ A' → A' → 𝒰 i} (ua e₁) P ~ P')
     where
