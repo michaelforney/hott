@@ -272,7 +272,7 @@ module Exercise13
   not : 𝟐 → 𝟐
   not = 𝟐-rec 𝟐 1₂ 0₂
 
-  -- There are two possibilities for 2 ≃ 2, id and not. In our
+  -- There are two possibilities for 𝟐 ≃ 𝟐, id and not. In our
   -- equivalence (𝟐 ≃ 𝟐) ≃ 𝟐, we associate `id` with 0₂, and `not`
   -- with 1₂. For some f : 𝟐 ≃ 𝟐, we have f 0₂ = 0₂ when f is id,
   -- and f 0₂ = 1₂ when f is not, so we can use f 0₂ in the forward
