@@ -316,3 +316,97 @@ module Exercise13
           (λ q → funext (𝟐-ind _ p (H 0₂ ⁻¹ ∙ ap h (p ⁻¹ ∙ q) ∙ H 1₂ ∙ q)))
           (f 1₂) refl)
         (f 0₂) refl , isequiv-isProp _ _)
+
+module Exercise14 {i} {A : 𝒰 i} {x : A}
+  where
+  -- In chapter 1 exercise 14, we showed that we couldn't use path
+  -- induction to prove (x : A) → (p : x = x) → p = reflₓ since,
+  -- given q : x = y, q = reflₓ is not well-typed (reflₓ : x = x,
+  -- while q : x = y). However, using the equality reflection rule
+  -- we have x ≡ y, so we can say reflₓ : x = y. Therefore, we can
+  -- define
+  --
+  --   C : (x s : A) → x = y → 𝒰
+  --   C x y q :≡ q = reflₓ
+  --
+  --   c : (x : A) → C x x reflₓ
+  --   c x :≡ refl {reflₓ}
+  --
+  -- Using path induction we have ind₌ C c x x p : p = reflₓ. By
+  -- applying the equality reflection rule again, we arrive at the
+  -- desired definitional equality, p ≡ reflₓ.
+
+module Exercise15 {i} {A : 𝒰 i} {B : A → 𝒰 i} {x y : A} {p : x == y} {u : B x}
+  where
+  open import HoTT.Universe.Identity
+
+  _ : transport p == pr₁ (idtoeqv (ap B p))
+  _ = =-ind (λ _ _ p → transport p == pr₁ (idtoeqv (ap B p)))
+    (λ _ → refl) _ _ p
+
+module Exercise16
+  where
+  open import HoTT.Equivalence
+  open import HoTT.Pi.Identity using (funext ; happly)
+
+  _ : ∀ {i} {A : 𝒰 i} {B : A → 𝒰 i} {f g : Π A B} →
+      isequiv (happly {f = f} {g})
+  _ = qinv→isequiv (funext , α , β)
+    where
+    -- "may require concepts from later chapters"
+    postulate
+      α : happly ∘ funext ~ id
+      β : funext ∘ happly ~ id
+
+module Exercise17 {i}
+  where
+  open import HoTT.Equivalence
+  open import HoTT.Product.Identity
+  open import HoTT.Universe.Identity
+  open import HoTT.Pi.Identity
+
+  variable
+    A A' B B' : 𝒰 i
+    P : A → 𝒰 i
+    P' : A' → 𝒰 i
+
+  module _ (e₁ : A ≃ A') (e₂ : B ≃ B')
+    where
+    -- (i) Proof without using univalence
+    prop-×' : (A × B) ≃ (A' × B')
+    prop-×' =
+      let f₁ = pr₁ e₁ ; f₂ = pr₁ e₂
+          (g₁ , α₁ , β₁) = isequiv→qinv (pr₂ e₁)
+          (g₂ , α₂ , β₂) = isequiv→qinv (pr₂ e₂)
+      in (λ (a , b) → f₁ a , f₂ b) , qinv→isequiv
+        ( (λ (a' , b') → g₁ a' , g₂ b')
+        , (λ (a' , b') → pair⁼ (α₁ a' , α₂ b'))
+        , (λ (a , b) → pair⁼ (β₁ a , β₂ b)) )
+
+    -- (ii) Proof using univalence (for general operator)
+    prop : (_⊙_ : 𝒰 i → 𝒰 i → 𝒰 i) → (A ⊙ B) ≃ (A' ⊙ B')
+    prop (_⊙_) = =-ind' A (λ A' _ → (A ⊙ B) ≃ (A' ⊙ B'))
+      (=-ind' B (λ B' _ → (A ⊙ B) ≃ (A ⊙ B')) (idtoeqv refl) B' (ua e₂))
+      A' (ua e₁)
+
+    prop-× = prop _×_
+
+    -- TODO: Proofs of (i) and (ii) are equal
+    postulate
+      _ : prop-×' == prop-×
+
+    -- (iii) Proof for non-dependent type formers (→, +)
+    prop-→ = prop (λ A B → A → B)
+    prop-+ = prop _+_
+
+  module _ (e₁ : A ≃ A') (e₂ : transport {P = λ A' → A' → 𝒰 i} (ua e₁) P ~ P')
+    where
+    prop-dep : (_⊙_ : (A : 𝒰 i) → (A → 𝒰 i) → 𝒰 i) → (A ⊙ P) ≃ (A' ⊙ P')
+    prop-dep _⊙_ = =-ind' A
+      (λ A' p → (P' : A' → 𝒰 i) → transport p P ~ P' → (A ⊙ P) ≃ (A' ⊙ P'))
+      (λ P' q → =-ind' P (λ P' _ → A ⊙ P ≃ A ⊙ P') (idtoeqv refl) P' (funext q))
+      A' (ua e₁) P' e₂
+
+    -- (iii) Proof for dependent type formers (Σ, Π)
+    prop-Σ = prop-dep Σ
+    prop-Π = prop-dep Π
