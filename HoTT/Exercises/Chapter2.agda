@@ -410,3 +410,21 @@ module Exercise17 {i}
     -- (iii) Proof for dependent type formers (Σ, Π)
     prop-Σ = prop-dep Σ
     prop-Π = prop-dep Π
+
+module Exercise18 {i} {A : 𝒰 i} {B : A → 𝒰 i} {f g : Π A B} {H : f ~ g}
+                  {x y : A} {p : x == y}
+  where
+  -- We first induct on p, changing our goal to
+  --
+  --   ap (transport refl) (H x) ∙ apd g refl = apd f refl ∙ H y
+  --
+  -- This reduces to
+  --
+  --   ap id (H x) ∙ refl = refl ∙ H x
+  --
+  -- Now, we just need one final induction on H x, after which our goal
+  -- reduces to refl : refl = refl.
+  _ : ap (transport p) (H x) ∙ apd g p == apd f p ∙ H y
+  _ = =-ind' x (λ y p → ap (transport p) (H x) ∙ apd g p == apd f p ∙ H y)
+    (=-ind' (f x) (λ _ Hₓ → ap id Hₓ ∙ refl == refl ∙ Hₓ) refl (g x) (H x))
+    y p
