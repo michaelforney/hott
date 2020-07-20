@@ -289,7 +289,7 @@ module Exercise13 where
   prop f = f (inr (f ∘ inl))
 
 module Exercise14 where
-  -- For induction, we must have a function C : (s : A) → (t : A) → (q : s == t) → U.
+  -- For induction, we must have a function C : (s : A) → (t : A) → (q : s == t) → 𝒰.
   -- Since q : s == t, the equality type q == refl {s} does not make sense because
   -- we are trying to equate elements of two different types.
 
