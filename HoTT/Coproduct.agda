@@ -22,8 +22,8 @@ code (inr _) (inl _) = Lift 𝟎
 code {i} (inr b₁) (inr b₂) = Lift {i} (b₁ == b₂)
 
 encode : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} {x y : A + B} → x == y → code x y
-encode {A = A} {B} {inl a} p = transport {A = A + B} {code (inl a)} p (lift refl)
-encode {A = A} {B} {inr b} p = transport {A = A + B} {code (inr b)} p (lift refl)
+encode {A = A} {B} {inl a} p = transport {A = A + B} (code (inl a)) p (lift refl)
+encode {A = A} {B} {inr b} p = transport {A = A + B} (code (inr b)) p (lift refl)
 
 decode : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} {x y : A + B} → code x y → x == y
 decode {x = inl _} {inl _} (lift p) = ap inl p

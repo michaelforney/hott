@@ -7,8 +7,8 @@ open import HoTT.Equivalence
 
 module _ {i} {A B : 𝒰 i} where
   idtoeqv : A == B → A ≃ B
-  idtoeqv p = transport {P = id} p , =-ind
-    (λ _ _ p → isequiv (transport p))
+  idtoeqv p = transport id p , =-ind
+    (λ _ _ p → isequiv (transport _ p))
     (λ _ → qinv→isequiv (id , (λ _ → refl) , (λ _ → refl)))
     A B p
 

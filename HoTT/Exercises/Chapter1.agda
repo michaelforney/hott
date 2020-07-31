@@ -34,11 +34,11 @@ module Exercise3 where
 
   ×-ind : ∀ {i} {A B : 𝒰 i}
            (C : A × B → 𝒰 i) → ((a : A) → (b : B) → C (a , b)) → (x : A × B) → C x
-  ×-ind C g x = transport {P = C} (×-uniq x) (g (pr₁ x) (pr₂ x))
+  ×-ind C g x = transport C (×-uniq x) (g (pr₁ x) (pr₂ x))
 
   Σ-ind : ∀ {i} {A : 𝒰 i} {B : A → 𝒰 i}
           (C : Σ A B → 𝒰 i) → ((a : A) → (b : B a) → C (a , b)) → (x : Σ A B) → C x
-  Σ-ind C g x = transport {P = C} (Σ-uniq x) (g (pr₁ x) (pr₂ x))
+  Σ-ind C g x = transport C (Σ-uniq x) (g (pr₁ x) (pr₂ x))
 
 module Exerecise4 where
   iter : ∀ {i} (C : 𝒰 i) → C → (C → C) → ℕ → C
@@ -109,12 +109,12 @@ module Exercise6 where
 
   ×'-ind : ∀ {i j k} {A : 𝒰 i} {B : 𝒰 j} →
            (C : A ×' B → 𝒰 k) → ((a : A) (b : B) → C (a ,' b)) → (x : A ×' B) → C x
-  ×'-ind C g x = transport {P = C} (×'-up x) (g (pr₁' x) (pr₂' x))
+  ×'-ind C g x = transport C (×'-up x) (g (pr₁' x) (pr₂' x))
 
   prop : ∀ {i j k} {A : 𝒰 i} {B : 𝒰 j}
            {C : A ×' B → 𝒰 k} {g : (a : A) (b : B) → C (a ,' b)} {a : A} {b : B} →
          ×'-ind C g (a ,' b) == g a b
-  prop {C = C} {g} {a} {b} = ap (λ p → transport {P = C} p (g a b))
+  prop {C = C} {g} {a} {b} = ap (λ p → transport C p (g a b))
     (ap funext (funext (𝟐-ind (λ _ → _ == _) refl refl)) ∙ Π-identity-η refl)
 
   {-
@@ -126,12 +126,12 @@ module Exercise6 where
 
   ×'-ind : ∀ {i j k} {A : 𝒰 i} {B : 𝒰 j} →
            (C : A ×' B → 𝒰 k) → ((a : A) (b : B) → C (a ,' b)) → (x : A ×' B) → C x
-  ×'-ind C g x = transport {P = C} (×'-up-compute x) (g (pr₁' x) (pr₂' x))
+  ×'-ind C g x = transport C (×'-up-compute x) (g (pr₁' x) (pr₂' x))
 
   prop : ∀ {i j k} {A : 𝒰 i} {B : 𝒰 j}
            {C : A ×' B → 𝒰 k} {g : (a : A) (b : B) → C (a ,' b)} {a : A} {b : B} →
          ×'-ind C g (a ,' b) == g a b
-  prop {C = C} {g} {a} {b} = ap (λ p → transport {P = C} p (g a b)) (=-linv (×'-up (a ,' b)))
+  prop {C = C} {g} {a} {b} = ap (λ p → transport C p (g a b)) (=-linv (×'-up (a ,' b)))
   -}
 
 module Exercise7 where
@@ -140,10 +140,10 @@ module Exercise7 where
   -- TODO: Using Lemma 3.11.8 might simplify this.
   =-ind' : ∀ {i j} {A : 𝒰 i} →
            (a : A) → (C : (x : A) → a == x → 𝒰 j) → C a refl → (x : A) → (p : a == x) → C x p
-  =-ind' {i} {j} {A} a C c x p = transport {P = λ{(x , p) → C x p}} (pair⁼ (p , =-ind D d a x p)) c
+  =-ind' {i} {j} {A} a C c x p = transport (λ{(x , p) → C x p}) (pair⁼ (p , =-ind D d a x p)) c
     where
     D : (x y : A) → x == y → 𝒰 i
-    D x y p = transport p refl == p
+    D x y p = transport _ p refl == p
     d : (x : A) → D x x refl
     d x = refl
 

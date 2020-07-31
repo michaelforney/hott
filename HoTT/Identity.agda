@@ -95,9 +95,9 @@ ap {x = x} {y} f p = =-ind (λ x y _ → f x == f y) (λ _ → refl) x y p
 -}
 
 -- Lemma 2.3.1
-transport : ∀ {i j} {A : 𝒰 i} {P : A → 𝒰 j} {x y : A} →
+transport : ∀ {i j} {A : 𝒰 i} {x y : A} (P : A → 𝒰 j) →
             x == y → P x → P y
-transport refl = id
+transport _ refl = id
 
 {- Induction proof
 transport {P = P} {x} {y} p = =-ind (λ x y _ → P x → P y) (λ _ → id) x y p
@@ -105,7 +105,7 @@ transport {P = P} {x} {y} p = =-ind (λ x y _ → P x → P y) (λ _ → id) x y
 
 -- Lemma 2.3.4
 apd : ∀ {i j} {A : 𝒰 i} {P : A → 𝒰 j} {x y : A}
-      (f : (x : A) → P x) (p : x == y) → transport p (f x) == f y
+      (f : (x : A) → P x) (p : x == y) → transport _ p (f x) == f y
 apd f refl = refl
 
 {- Induction proof
@@ -114,5 +114,5 @@ apd {x = x} {y} f p = =-ind (λ x y p → transport p (f x) == f y) (λ _ → re
 
 -- Lemma 2.3.5
 transportconst : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} {x y : A}
-                 (p : x == y) (b : B) → transport p b == b
+                 (p : x == y) (b : B) → transport _ p b == b
 transportconst refl _ = refl

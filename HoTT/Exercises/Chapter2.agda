@@ -118,13 +118,13 @@ module Exercise4 {i} {A : 𝒰 i} where
 module Exercise5 {i j} {A : 𝒰 i} {B : 𝒰 j} {x y : A} {p : x == y} {f : A → B} where
   open import HoTT.Equivalence
 
-  prop : f x == f y ≃ transport p (f x) == f y
+  prop : f x == f y ≃ transport _ p (f x) == f y
   prop = g , qinv→isequiv (h , α , β) where
     -- 2.3.6
-    g : f x == f y → transport p (f x) == f y
+    g : f x == f y → transport _ p (f x) == f y
     g = transportconst p (f x) ∙_
     -- 2.3.7
-    h : transport p (f x) == f y → f x == f y
+    h : transport _ p (f x) == f y → f x == f y
     h = transportconst p (f x) ⁻¹ ∙_
     α : (g ∘ h) ~ id
     α q = assoc (transportconst p (f x)) (transportconst p (f x) ⁻¹) q ∙
@@ -146,21 +146,21 @@ module Exercise7 {i j k l} {A : 𝒰 i} {A' : 𝒰 j} {B : A → 𝒰 k} {B' : A
   open import HoTT.Sigma.Identity
 
   Lemma2/3/10 : ∀ {i j k} {A : 𝒰 i} {B : 𝒰 j} {P : B → 𝒰 k} {f : A → B} {x y : A} (p : x == y) (u : P (f x)) →
-                transport {P = P ∘ f} p u == transport {P = P} (ap f p) u
+                transport (P ∘ f) p u == transport P (ap f p) u
   Lemma2/3/10 {P = P} {f} {x} {y} = =-ind
-    (λ x y p → (u : P (f x)) → transport {P = P ∘ f} p u == transport {P = P} (ap f p) u)
+    (λ x y p → (u : P (f x)) → transport (P ∘ f) p u == transport P (ap f p) u)
     (λ _ _ → refl) x y
 
   Lemma2/3/11 : ∀ {i j k} {A : 𝒰 i} {P : A → 𝒰 j} {Q : A → 𝒰 k} {f : (x : A) → P x → Q x} {x y : A} (p : x == y) (u : P x) →
-                transport {P = Q} p (f x u) == f y (transport {P = P} p u)
+                transport Q p (f x u) == f y (transport P p u)
   Lemma2/3/11 {P = P} {Q} {f} {x} {y} = =-ind
-    (λ x y p → (u : P x) → transport {P = Q} p (f x u) == f y (transport {P = P} p u))
+    (λ x y p → (u : P x) → transport Q p (f x u) == f y (transport P p u))
     (λ _ _ → refl) x y
 
   f : Σ A B → Σ A' B'
   f x = g (pr₁ x) , h (pr₁ x) (pr₂ x)
 
-  prop : {x y : Σ A B} {p : pr₁ x == pr₁ y} {q : transport p (pr₂ x) == pr₂ y} →
+  prop : {x y : Σ A B} {p : pr₁ x == pr₁ y} {q : transport _ p (pr₂ x) == pr₂ y} →
          ap f (pair⁼ (p , q)) == pair⁼
            (ap g p ,
             Lemma2/3/10 p (h (pr₁ x) (pr₂ x)) ⁻¹ ∙ Lemma2/3/11 {f = h} p (pr₂ x) ∙ ap (h (pr₁ y)) q)
@@ -170,7 +170,7 @@ module Exercise7 {i j k l} {A : 𝒰 i} {A' : 𝒰 j} {B : A → 𝒰 k} {B' : A
     e : {x₁ : A} (x₂ : B x₁) → E x₂ x₂ refl
     e _ = refl
     D : (x₁ y₁ : A) → x₁ == y₁ → 𝒰 (j ⊔ k ⊔ l)
-    D x₁ y₁ p = (x₂ : B x₁) (y₂ : B y₁) (q : transport p x₂ == y₂) → ap f (pair⁼ (p , q)) == pair⁼
+    D x₁ y₁ p = (x₂ : B x₁) (y₂ : B y₁) (q : transport _ p x₂ == y₂) → ap f (pair⁼ (p , q)) == pair⁼
       (ap g p , Lemma2/3/10 p (h x₁ x₂) ⁻¹ ∙ Lemma2/3/11 {f = h} p x₂ ∙ ap (h y₁) q)
     d : (x₁ : A) → D x₁ x₁ refl
     d x₁ x₂ y₂ q = =-ind E e x₂ y₂ q
@@ -340,8 +340,8 @@ module Exercise15 {i} {A : 𝒰 i} {B : A → 𝒰 i} {x y : A} {p : x == y} {u 
   where
   open import HoTT.Universe.Identity
 
-  _ : transport p == pr₁ (idtoeqv (ap B p))
-  _ = =-ind (λ _ _ p → transport p == pr₁ (idtoeqv (ap B p)))
+  _ : transport _ p == pr₁ (idtoeqv (ap B p))
+  _ = =-ind (λ _ _ p → transport _ p == pr₁ (idtoeqv (ap B p)))
     (λ _ → refl) _ _ p
 
 module Exercise16
@@ -371,7 +371,7 @@ module Exercise17 {i}
     P' : A' → 𝒰 i
 
   prop : (_⊙_ : 𝒰 i → 𝒰 i → 𝒰 i) → A == A' → B == B' → (A ⊙ B) ≃ (A' ⊙ B')
-  prop {A} {A'} {B} {B'} (_⊙_) p q = transport {P = λ (A' , B') → A ⊙ B ≃ A' ⊙ B'}
+  prop {A} {A'} {B} {B'} (_⊙_) p q = transport (λ{ (A' , B') → A ⊙ B ≃ A' ⊙ B' })
     (pair⁼ (p , q)) (idtoeqv refl)
 
   module _ (e₁ : A ≃ A') (e₂ : B ≃ B')
@@ -396,7 +396,7 @@ module Exercise17 {i}
 
   -- Proof that (i) and (ii) are equal
   propᵢ₌ᵢᵢ : (e₁ : A ≃ A') (e₂ : B ≃ B') → prop-×' e₁ e₂ == prop-× e₁ e₂
-  propᵢ₌ᵢᵢ {A} {A'} {B} {B'} e₁ e₂ = transport {P = λ (e₁ , e₂) → prop-×' e₁ e₂ == prop-× e₁ e₂}
+  propᵢ₌ᵢᵢ {A} {A'} {B} {B'} e₁ e₂ = transport (λ{ (e₁ , e₂) → prop-×' e₁ e₂ == prop-× e₁ e₂ })
     (pair⁼ (𝒰-identity-β e₁ , 𝒰-identity-β e₂))
     (=-ind' A (λ _ p → prop-×' (idtoeqv p) (idtoeqv (ua e₂)) == prop-× (idtoeqv p) (idtoeqv (ua e₂)))
       (=-ind' B (λ _ q → prop-×' _ (idtoeqv q) == prop-× _ (idtoeqv q))
@@ -404,11 +404,11 @@ module Exercise17 {i}
         B' (ua e₂))
       A' (ua e₁))
 
-  module _ (e₁ : A ≃ A') (e₂ : transport {P = λ A' → A' → 𝒰 i} (ua e₁) P ~ P')
+  module _ (e₁ : A ≃ A') (e₂ : transport (λ A' → A' → 𝒰 i) (ua e₁) P ~ P')
     where
     prop-dep : (_⊙_ : (A : 𝒰 i) → (A → 𝒰 i) → 𝒰 i) → (A ⊙ P) ≃ (A' ⊙ P')
     prop-dep _⊙_ = =-ind' A
-      (λ A' p → (P' : A' → 𝒰 i) → transport p P ~ P' → (A ⊙ P) ≃ (A' ⊙ P'))
+      (λ A' p → (P' : A' → 𝒰 i) → transport _ p P ~ P' → (A ⊙ P) ≃ (A' ⊙ P'))
       (λ P' q → =-ind' P (λ P' _ → A ⊙ P ≃ A ⊙ P') (idtoeqv refl) P' (funext q))
       A' (ua e₁) P' e₂
 
@@ -429,7 +429,7 @@ module Exercise18 {i} {A : 𝒰 i} {B : A → 𝒰 i} {f g : Π A B} {H : f ~ g}
   --
   -- Now, we just need one final induction on H x, after which our goal
   -- reduces to refl : refl = refl.
-  _ : ap (transport p) (H x) ∙ apd g p == apd f p ∙ H y
-  _ = =-ind' x (λ y p → ap (transport p) (H x) ∙ apd g p == apd f p ∙ H y)
+  _ : ap (transport _ p) (H x) ∙ apd g p == apd f p ∙ H y
+  _ = =-ind' x (λ y p → ap (transport _ p) (H x) ∙ apd g p == apd f p ∙ H y)
     (=-ind' (f x) (λ _ Hₓ → ap id Hₓ ∙ refl == refl ∙ Hₓ) refl (g x) (H x))
     y p
