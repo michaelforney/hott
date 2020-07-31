@@ -237,29 +237,47 @@ module Exercise10 {i j k} {A : 𝒰 i} {B : A → 𝒰 j} {C : Σ A B → 𝒰 k
     g : (Σ (Σ A B) λ p → C p) → (Σ A λ x → Σ (B x) λ y → C (x , y))
     g ((x , y) , z) = x , y , z
 
-module Exercise11 {i j k} {A : 𝒰 i} {B : 𝒰 j} {C : 𝒰 k} {f : A → C} {g : B → C}
+module Exercise11
   where
   open import HoTT.Equivalence
   open import HoTT.Pi.Identity
   open import HoTT.Sigma.Identity
 
-  pullback : ∀ {i j k} (A : 𝒰 i) (B : 𝒰 j) {C : 𝒰 k} {f : A → C} {g : B → C} → 𝒰 _
-  pullback A B {f = f} {g} = Σ A λ a → Σ B λ b → f a == g b
+  variable
+    i : Level
+    A B C D : 𝒰 i
 
-  P : 𝒰 (i ⊔ j ⊔ k)
-  P = pullback A B {C} {f} {g}
+  pullback : ∀ {i j} (A : 𝒰 i) (B : 𝒰 j) → (A → C) → (B → C) → 𝒰 _
+  pullback A B ac bc = Σ A λ a → Σ B λ b → ac a == bc b
 
-  prop : ∀ {l} {X : 𝒰 l} → (X → P) ≃ pullback (X → A) (X → B)
-  prop {X = X} = to , qinv→isequiv (from , α , β)
+  module Square (ab : A → B) (ac : A → C) (bd : B → D) (cd : C → D)
     where
-    to : (X → P) → pullback (X → A) (X → B)
-    to s = pr₁ ∘ s , pr₁ ∘ pr₂ ∘ s , funext (pr₂ ∘ pr₂ ∘ s)
-    from : pullback (X → A) (X → B) → (X → P)
-    from (h' , k' , p) x = h' x , k' x , happly p x
-    α : to ∘ from ~ id
-    α (_ , _ , p) = pair⁼ (refl , pair⁼ (refl , Π-identity-η p))
-    β : from ∘ to ~ id
-    β s = funext λ x → pair⁼ (refl , pair⁼ (refl , happly (Π-identity-β (pr₂ ∘ pr₂ ∘ s)) x))
+    IsCommutative = bd ∘ ab ~ cd ∘ ac
+
+    module Commutative (comm : IsCommutative)
+      where
+      map : ∀ {X : 𝒰 i} → (X → A) → pullback (X → B) (X → C) (bd ∘_) (cd ∘_)
+      map xa = ab ∘ xa , ac ∘ xa , funext (comm ∘ xa)
+
+      IsPullback : ∀ {i} → 𝒰 _
+      IsPullback {i} = (X : 𝒰 i) → isequiv (map {X = X})
+
+  module _ {ac : A → C} {bc : B → C}
+    where
+    P = pullback A B ac bc
+
+    open Square.Commutative {A = P} pr₁ (pr₁ ∘ pr₂) ac bc (pr₂ ∘ pr₂)
+
+    prop : IsPullback {i}
+    prop X = qinv→isequiv (map⁻¹ , α , β)
+      where
+      map⁻¹ : pullback (X → A) (X → B) (ac ∘_) (bc ∘_) → (X → P)
+      map⁻¹ (h' , k' , p) x = h' x , k' x , happly p x
+      α : map ∘ map⁻¹ ~ id
+      α (_ , _ , p) = pair⁼ (refl , pair⁼ (refl , Π-identity-η p))
+      β : map⁻¹ ∘ map ~ id
+      β xp = funext λ x → pair⁼ (refl , pair⁼ (refl ,
+        happly (Π-identity-β (pr₂ ∘ pr₂ ∘ xp)) x))
 
 module Exercise13
   where
