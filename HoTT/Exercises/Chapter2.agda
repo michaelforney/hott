@@ -1,94 +1,92 @@
 {-# OPTIONS --without-K #-}
 module HoTT.Exercises.Chapter2 where
 
-open import HoTT.Types
-open import HoTT.Identity
+open import HoTT.Base
 
-module Exercise1 {i} {A : 𝒰 i} (x y z : A) (p : x == y) (q : y == z) where
-  Lemma2/1/2 : 𝒰 i
-  Lemma2/1/2 = {x y z : A} → x == y → y == z → x == z
+module Exercise1 {i} {A : 𝒰 i} where
+  module _ {x y z : A} (p : x == y) (q : y == z) where
+    -- Induction over p
+    _∙₁_ : x == z
+    _∙₁_ = =-ind D d p z q where
+      D : (x y : A) → x == y → 𝒰 i
+      D x y p = (z : A) → (q : y == z) → x == z
+      d : (x : A) → D x x refl
+      d x z q = q
 
-  -- Induction over p
-  _∙₁_ : Lemma2/1/2
-  _∙₁_ {x} {y} {z} p q = =-ind D d x y p z q where
-    D : (x y : A) → x == y → 𝒰 i
-    D x y p = (z : A) → (q : y == z) → x == z
-    d : (x : A) → D x x refl
-    d x z q = q
+    -- Induction over q
+    _∙₂_ : x == z
+    _∙₂_ = =-ind D d q x p where
+      D : (y z : A) → y == z → 𝒰 i
+      D y z q = (x : A) → (p : x == y) → x == z
+      d : (y : A) → D y y refl
+      d y x p = p
 
-  -- Induction over q
-  _∙₂_ : Lemma2/1/2
-  _∙₂_ {x} {y} {z} p q = =-ind D d y z q x p where
-    D : (y z : A) → y == z → 𝒰 i
-    D y z q = (x : A) → (p : x == y) → x == z
-    d : (y : A) → D y y refl
-    d y x p = p
+    -- Induction over p then q
+    _∙₃_ : x == z
+    _∙₃_ = =-ind D d p z q where
+      E : (x z : A) → (q : x == z) → 𝒰 i
+      E x z q = x == z
+      e : (x : A) → E x x refl
+      e x = refl
+      D : (x y : A) → x == y → 𝒰 i
+      D x y p = (z : A) → (q : y == z) → x == z
+      d : (x : A) → D x x refl
+      d x z q = =-ind E e q
 
-  -- Induction over p then q
-  _∙₃_ : Lemma2/1/2
-  _∙₃_ {x} {y} {z} p q = =-ind D d x y p z q where
-    E : (x z : A) → (q : x == z) → 𝒰 i
-    E x z q = x == z
-    e : (x : A) → E x x refl
-    e x = refl
-    D : (x y : A) → x == y → 𝒰 i
-    D x y p = (z : A) → (q : y == z) → x == z
-    d : (x : A) → D x x refl
-    d x z q = =-ind E e x z q
+  module _ {x y z : A} (p : x == y) (q : y == z) where
+    prop₁₌₂ : p ∙₁ q == p ∙₂ q
+    prop₁₌₂ = =-ind D d p z q where
+      E : (y z : A) → y == z → 𝒰 i
+      E y z q = refl ∙₁ q == refl ∙₂ q
+      e : (y : A) → E y y refl
+      e y = refl
+      D : (x y : A) → x == y → 𝒰 i
+      D x y p = (z : A) → (q : y == z) → p ∙₁ q == p ∙₂ q
+      d : (x : A) → D x x refl
+      d x z q = =-ind E e q
 
-  prop₁₌₂ : p ∙₁ q == p ∙₂ q
-  prop₁₌₂ = =-ind D d x y p z q where
-    E : (y z : A) → y == z → 𝒰 i
-    E y z q = refl ∙₁ q == refl ∙₂ q
-    e : (y : A) → E y y refl
-    e y = refl
-    D : (x y : A) → x == y → 𝒰 i
-    D x y p = (z : A) → (q : y == z) → p ∙₁ q == p ∙₂ q
-    d : (x : A) → D x x refl
-    d x z q = =-ind E e x z q
+    prop₂₌₃ : p ∙₂ q == p ∙₃ q
+    prop₂₌₃ = =-ind D d p z q where
+      E : (y z : A) → y == z → 𝒰 i
+      E y z q = refl ∙₂ q == refl ∙₃ q
+      e : (y : A) → E y y refl
+      e y = refl
+      D : (x y : A) → x == y → 𝒰 i
+      D x y p = (z : A) → (q : y == z) → p ∙₂ q == p ∙₃ q
+      d : (x : A) → D x x refl
+      d x z q = =-ind E e q
 
-  prop₂₌₃ : p ∙₂ q == p ∙₃ q
-  prop₂₌₃ = =-ind D d x y p z q where
-    E : (y z : A) → y == z → 𝒰 i
-    E y z q = refl ∙₂ q == refl ∙₃ q
-    e : (y : A) → E y y refl
-    e y = refl
-    D : (x y : A) → x == y → 𝒰 i
-    D x y p = (z : A) → (q : y == z) → p ∙₂ q == p ∙₃ q
-    d : (x : A) → D x x refl
-    d x z q = =-ind E e x z q
-
-  prop₁₌₃ : p ∙₁ q == p ∙₃ q
-  prop₁₌₃ = =-ind D d x y p z q where
-    E : (y z : A) → y == z → 𝒰 i
-    E y z q = refl ∙₁ q == refl ∙₃ q
-    e : (y : A) → E y y refl
-    e y = refl
-    D : (x y : A) → x == y → 𝒰 i
-    D x y p = (z : A) → (q : y == z) → p ∙₁ q == p ∙₃ q
-    d : (x : A) → D x x refl
-    d x z q = =-ind E e x z q
+    prop₁₌₃ : p ∙₁ q == p ∙₃ q
+    prop₁₌₃ = =-ind D d p z q where
+      E : (y z : A) → y == z → 𝒰 i
+      E y z q = refl ∙₁ q == refl ∙₃ q
+      e : (y : A) → E y y refl
+      e y = refl
+      D : (x y : A) → x == y → 𝒰 i
+      D x y p = (z : A) → (q : y == z) → p ∙₁ q == p ∙₃ q
+      d : (x : A) → D x x refl
+      d x z q = =-ind E e q
 
 module Exercise2 {i} {A : 𝒰 i} {x y z : A} {p : x == y} {q : y == z} where
-  open Exercise1 {i} {A} using (_∙₁_ ; _∙₂_ ; _∙₃_ ; prop₁₌₂ ; prop₂₌₃ ; prop₁₌₃)
+  open Exercise1
 
-  prop : prop₁₌₂ x y z p q ∙ prop₂₌₃ x y z p q == prop₁₌₃ x y z p q
-  prop = =-ind D d x y p z q where
+  _ : prop₁₌₂ p q ∙ prop₂₌₃ p q == prop₁₌₃ p q
+  _ = =-ind D d p z q where
     E : (y z : A) → y == z → 𝒰 i
-    E y z q = prop₁₌₂ y y z refl q ∙ prop₂₌₃ y y z refl q == prop₁₌₃ y y z refl q
+    E y z q = prop₁₌₂ refl q ∙ prop₂₌₃ refl q == prop₁₌₃ refl q
     e : (y : A) → E y y refl
     e y = refl
     D : (x y : A) → x == y → 𝒰 i
-    D x y p = (z : A) → (q : y == z) → prop₁₌₂ x y z p q ∙ prop₂₌₃ x y z p q == prop₁₌₃ x y z p q
+    D x y p = (z : A) → (q : y == z) → prop₁₌₂ p q ∙ prop₂₌₃ p q == prop₁₌₃ p q
     d : (x : A) → D x x refl
-    d x z q = =-ind E e x z q
+    d x z q = =-ind E e q
 
-module Exercise3 {i} {A : 𝒰 i} (x y z : A) (p : x == y) (q : y == z) where
-  open Exercise1 {i} {A} x y z p q using (Lemma2/1/2 ; _∙₁_)
+module Exercise3 {i} {A : 𝒰 i} where
+  open Exercise1 using (_∙₁_)
 
   -- Induction over q then p
-  _∙₄_ : Lemma2/1/2
-  _∙₄_ {x} {y} {z} p q = =-ind D d y z q x p where
+  _∙₄_ : {x y z : A} → x == y → y == z → x == z
+  _∙₄_ {x} {y} {z} p q = =-ind D d q x p where
     E : (x y : A) → (p : x == y) → 𝒰 i
     E x y _ = x == y
     e : (x : A) → E x x refl
@@ -96,10 +94,10 @@ module Exercise3 {i} {A : 𝒰 i} (x y z : A) (p : x == y) (q : y == z) where
     D : (y z : A) → y == z → 𝒰 i
     D y z q = (x : A) → (p : x == y) → x == z
     d : (y : A) → D y y refl
-    d y x p = =-ind E e x y p
+    d y x p = =-ind E e p
 
-  prop₁₌₄ : p ∙₁ q == p ∙₄ q
-  prop₁₌₄ = =-ind D d x y p z q where
+  prop₁₌₄ : {x y z : A} (p : x == y) (q : y == z) → p ∙₁ q == p ∙₄ q
+  prop₁₌₄ {x} {y} {z} p q = =-ind D d p z q where
     E : (y z : A) → y == z → 𝒰 i
     E y z q = refl ∙₁ q == refl ∙₄ q
     e : (y : A) → E y y refl
@@ -107,99 +105,82 @@ module Exercise3 {i} {A : 𝒰 i} (x y z : A) (p : x == y) (q : y == z) where
     D : (x y : A) → x == y → 𝒰 i
     D x y p = (z : A) → (q : y == z) → p ∙₁ q == p ∙₄ q
     d : (x : A) → D x x refl
-    d x z q = =-ind E e x z q
+    d x z q = =-ind E e q
 
-module Exercise4 {i} {A : 𝒰 i} where
-  open import HoTT.NaturalNumber
-
+module Exercise4 {i} (A : 𝒰 i) where
   n-path : ℕ → 𝒰 i
-  n-path = ℕ-rec (𝒰 i) A (λ n c → Σ c (λ x → Σ c (λ y → x == y)))
+  n-path = ℕ-rec A (λ n P → Σ[ x ∶ P ] (Σ[ y ∶ P ] (x == y)))
 
-module Exercise5 {i j} {A : 𝒰 i} {B : 𝒰 j} {x y : A} {p : x == y} {f : A → B} where
+module Exercise5 {i} {A B : 𝒰 i} {x y : A} {p : x == y} {f : A → B} where
+  open import HoTT.Identity
   open import HoTT.Equivalence
 
-  prop : f x == f y ≃ transport _ p (f x) == f y
-  prop = g , qinv→isequiv (h , α , β) where
+  _ : f x == f y ≃ transport _ p (f x) == f y
+  _ = g , qinv→isequiv (h , η , ε)
+    where
     -- 2.3.6
     g : f x == f y → transport _ p (f x) == f y
     g = transportconst p (f x) ∙_
     -- 2.3.7
     h : transport _ p (f x) == f y → f x == f y
     h = transportconst p (f x) ⁻¹ ∙_
-    α : (g ∘ h) ~ id
-    α q = assoc (transportconst p (f x)) (transportconst p (f x) ⁻¹) q ∙
-          ap (_∙ q) (=-rinv (transportconst p (f x))) ∙ lu q ⁻¹
-    β : (h ∘ g) ~ id
-    β q = assoc (transportconst p (f x) ⁻¹) (transportconst p (f x))q ∙
-          ap (_∙ q) (=-linv (transportconst p (f x))) ∙ lu q ⁻¹
+    η : (h ∘ g) ~ id
+    η q = assoc ∙ (invₗ ∙ᵣ q ∙ unitₗ ⁻¹)
+    ε : (g ∘ h) ~ id
+    ε q = assoc ∙ (invᵣ ∙ᵣ q ∙ unitₗ ⁻¹)
+
 
 module Exercise6 {i} {A : 𝒰 i} {x y z : A} {p : x == y} where
   open import HoTT.Equivalence
+  open import HoTT.Identity
 
-  prop : y == z ≃ x == z
-  prop = (p ∙_) , qinv→isequiv (p ⁻¹ ∙_ ,
-     (λ q → assoc p (p ⁻¹) q ∙ ap (_∙ q) (=-rinv p) ∙ lu q ⁻¹) ,
-     (λ q → assoc (p ⁻¹) p q ∙ ap (_∙ q) (=-linv p) ∙ lu q ⁻¹))
+  _ : y == z ≃ x == z
+  _ = f , qinv→isequiv (g , η , ε)
+    where
+    f = p ∙_
+    g = p ⁻¹ ∙_
+    η : g ∘ f ~ id
+    η q = assoc ∙ (invₗ ∙ᵣ q ∙ unitₗ ⁻¹)
+    ε : f ∘ g ~ id
+    ε q = assoc ∙ (invᵣ ∙ᵣ q ∙ unitₗ ⁻¹)
 
 module Exercise7 {i j k l} {A : 𝒰 i} {A' : 𝒰 j} {B : A → 𝒰 k} {B' : A' → 𝒰 l}
-                 {g : A → A'} {h : (x : A) → B x → B' (g x)} where
-  open import HoTT.Sigma.Identity
+                 {g : A → A'} {h : {x : A} → B x → B' (g x)} where
+  open import HoTT.Identity
+  open import HoTT.Identity.Sigma
 
-  Lemma2/3/10 : ∀ {i j k} {A : 𝒰 i} {B : 𝒰 j} {P : B → 𝒰 k} {f : A → B} {x y : A} (p : x == y) (u : P (f x)) →
-                transport (P ∘ f) p u == transport P (ap f p) u
-  Lemma2/3/10 {P = P} {f} {x} {y} = =-ind
-    (λ x y p → (u : P (f x)) → transport (P ∘ f) p u == transport P (ap f p) u)
-    (λ _ _ → refl) x y
-
-  Lemma2/3/11 : ∀ {i j k} {A : 𝒰 i} {P : A → 𝒰 j} {Q : A → 𝒰 k} {f : (x : A) → P x → Q x} {x y : A} (p : x == y) (u : P x) →
-                transport Q p (f x u) == f y (transport P p u)
-  Lemma2/3/11 {P = P} {Q} {f} {x} {y} = =-ind
-    (λ x y p → (u : P x) → transport Q p (f x u) == f y (transport P p u))
-    (λ _ _ → refl) x y
-
-  f : Σ A B → Σ A' B'
-  f x = g (pr₁ x) , h (pr₁ x) (pr₂ x)
-
-  prop : {x y : Σ A B} {p : pr₁ x == pr₁ y} {q : transport _ p (pr₂ x) == pr₂ y} →
-         ap f (pair⁼ (p , q)) == pair⁼
-           (ap g p ,
-            Lemma2/3/10 p (h (pr₁ x) (pr₂ x)) ⁻¹ ∙ Lemma2/3/11 {f = h} p (pr₂ x) ∙ ap (h (pr₁ y)) q)
-  prop {x = x₁ , x₂} {y = y₁ , y₂} {p} {q} = =-ind D d x₁ y₁ p x₂ y₂ q where
-    E : {x₁ : A} (x₂ y₂ : B x₁) → x₂ == y₂ → 𝒰 (j ⊔ l)
-    E {x₁} x₂ y₂ q = ap f (pair⁼ (refl , q)) == pair⁼ (refl , refl ∙ refl ∙ ap (h x₁) q)
-    e : {x₁ : A} (x₂ : B x₁) → E x₂ x₂ refl
-    e _ = refl
-    D : (x₁ y₁ : A) → x₁ == y₁ → 𝒰 (j ⊔ k ⊔ l)
-    D x₁ y₁ p = (x₂ : B x₁) (y₂ : B y₁) (q : transport _ p x₂ == y₂) → ap f (pair⁼ (p , q)) == pair⁼
-      (ap g p , Lemma2/3/10 p (h x₁ x₂) ⁻¹ ∙ Lemma2/3/11 {f = h} p x₂ ∙ ap (h y₁) q)
-    d : (x₁ : A) → D x₁ x₁ refl
-    d x₁ x₂ y₂ q = =-ind E e x₂ y₂ q
+  prop : {x y : Σ A B} (p : pr₁ x == pr₁ y) (q : transport B p (pr₂ x) == (pr₂ y)) →
+         ap (λ x → g (pr₁ x) , h (pr₂ x)) (pair⁼ {x = x} {y} (p , q)) ==
+         pair⁼ (ap g p , transport-ap B' g p (h (pr₂ x)) ∙ transport-∘ h p (pr₂ x) ∙ ap h q)
+  prop {x = _ , _} {_ , _} refl refl = refl
 
 module Exercise8 {i j k l} {A : 𝒰 i} {B : 𝒰 j} {A' : 𝒰 k} {B' : 𝒰 l}
                  {g : A → A'} {h : B → B'} where
-  open import HoTT.Coproduct
+  open import HoTT.Identity.Coproduct
+
+  private variable x y : A + B
 
   f : A + B → A' + B'
-  f = +-rec (A' + B') (inl ∘ g) (inr ∘ h)
+  f = +-rec (inl ∘ g) (inr ∘ h)
 
-  prop : {x y : A + B} {p : code x y} →
-         ap f (decode p) == decode (+-ind (λ x → (y : A + B) → code x y → code (f x) (f y))
-           (λ a y p → +-ind (λ y → code (inl a) y → code (f (inl a)) (f y))
-             (λ a' (lift p) → lift (ap g p)) (λ b' (lift p) → (lift p)) y p)
-           (λ b y p → +-ind (λ y → code (inr b) y → code (f (inr b)) (f y))
-             (λ a' (lift p) → lift p) (λ b' (lift p) → lift (ap h p)) y p)
-           x y p)
-  prop {inl a} {inl .a} {lift refl} = refl
-  prop {inl _} {inr _} {lift ()}
-  prop {inr _} {inl _} {lift ()}
-  prop {inr b} {inr .b} {lift refl} = refl
+  ap-gh : (p : x =+ y) → f x =+ f y
+  ap-gh {inl _} {inl _} (lift p) = lift (ap g p)
+  ap-gh {inl _} {inr _} ()
+  ap-gh {inr _} {inl _} ()
+  ap-gh {inr _} {inr _} (lift p) = lift (ap h p)
 
-module Exercise9 {i j} {A : 𝒰 i} {B : 𝒰 j} where
+  prop : (p : x =+ y) → ap f (=+-intro p) == =+-intro (ap-gh p)
+  prop {inl _} {inl _} (lift refl) = refl
+  prop {inl _} {inr _} ()
+  prop {inr _} {inl _} ()
+  prop {inr _} {inr _} (lift refl) = refl
+
+module Exercise9 {i j k} {A : 𝒰 i} {B : 𝒰 j} where
   open import HoTT.Equivalence
-  open import HoTT.Pi.Identity
+  open import HoTT.Identity.Pi
 
-  prop₁ : ∀ {k} {X : 𝒰 k} → (A + B → X) ≃ (A → X) × (B → X)
-  prop₁ {X = X} = f , qinv→isequiv (g , α , β)
+  prop₁ : {X : 𝒰 k} → (A + B → X) ≃ (A → X) × (B → X)
+  prop₁ {X} = f , qinv→isequiv (g , β , α)
     where
     f : (A + B → X) → (A → X) × (B → X)
     f h = h ∘ inl , h ∘ inr
@@ -207,13 +188,13 @@ module Exercise9 {i j} {A : 𝒰 i} {B : 𝒰 j} where
     g (h , _) (inl a) = h a
     g (_ , h) (inr b) = h b
     α : f ∘ g ~ id
-    α _ = refl
+    α (_ , _) = refl
     β : g ∘ f ~ id
-    β h = funext λ{(inl _) → refl ; (inr _) → refl}
+    β _ = funext λ{(inl _) → refl ; (inr _) → refl}
 
-  prop₂ : ∀ {k} {P : A + B → 𝒰 k} →
+  prop₂ : {P : A + B → 𝒰 k} →
           ((x : A + B) → P x) ≃ ((a : A) → P (inl a)) × ((b : B) → P (inr b))
-  prop₂ {P = P} = f , qinv→isequiv (g , α , β)
+  prop₂ {P} = f , qinv→isequiv (g , β , α)
     where
     f : ((x : A + B) → P x) → ((a : A) → P (inl a)) × ((b : B) → P (inr b))
     f h = (h ∘ inl) , h ∘ inr
@@ -221,74 +202,39 @@ module Exercise9 {i j} {A : 𝒰 i} {B : 𝒰 j} where
     g (h , _) (inl a) = h a
     g (_ , h) (inr b) = h b
     α : f ∘ g ~ id
-    α _ = refl
+    α (_ , _) = refl
     β : g ∘ f ~ id
-    β h = funext λ{(inl _) → refl ; (inr _) → refl}
+    β _ = funext λ{(inl _) → refl ; (inr _) → refl}
 
 module Exercise10 {i j k} {A : 𝒰 i} {B : A → 𝒰 j} {C : Σ A B → 𝒰 k}
   where
   open import HoTT.Equivalence
 
-  _ : (Σ A λ x → Σ (B x) λ y → C (x , y)) ≃ (Σ (Σ A B) λ p → C p)
-  _ = f , qinv→isequiv (g , (λ _ → refl) , (λ _ → refl))
+  _ : Σ[ x ∶ A ] Σ[ y ∶ B x ] C (x , y) ≃ Σ[ p ∶ Σ A B ] C p
+  _ = f , qinv→isequiv (g , η , ε)
     where
-    f : (Σ A λ x → Σ (B x) λ y → C (x , y)) → (Σ (Σ A B) λ p → C p)
+    f : Σ[ x ∶ A ] Σ[ y ∶ B x ] C (x , y) → Σ[ p ∶ Σ A B ] C p
     f (x , y , z) = (x , y) , z
-    g : (Σ (Σ A B) λ p → C p) → (Σ A λ x → Σ (B x) λ y → C (x , y))
+    g : Σ[ p ∶ Σ A B ] C p → Σ[ x ∶ A ] Σ[ y ∶ B x ] C (x , y)
     g ((x , y) , z) = x , y , z
+    η : g ∘ f ~ id
+    η (_ , _ , _) = refl
+    ε : f ∘ g ~ id
+    ε ((_ , _) , _) = refl
 
-module Exercise11
-  where
-  open import HoTT.Equivalence
-  open import HoTT.Pi.Identity
-  open import HoTT.Sigma.Identity
+import HoTT.Exercises.Chapter2.Exercise11
 
-  variable
-    i : Level
-    A B C D : 𝒰 i
-
-  pullback : ∀ {i j} (A : 𝒰 i) (B : 𝒰 j) → (A → C) → (B → C) → 𝒰 _
-  pullback A B ac bc = Σ A λ a → Σ B λ b → ac a == bc b
-
-  module Square (ab : A → B) (ac : A → C) (bd : B → D) (cd : C → D)
-    where
-    IsCommutative = bd ∘ ab ~ cd ∘ ac
-
-    module Commutative (comm : IsCommutative)
-      where
-      map : ∀ {X : 𝒰 i} → (X → A) → pullback (X → B) (X → C) (bd ∘_) (cd ∘_)
-      map xa = ab ∘ xa , ac ∘ xa , funext (comm ∘ xa)
-
-      IsPullback : ∀ {i} → 𝒰 _
-      IsPullback {i} = (X : 𝒰 i) → isequiv (map {X = X})
-
-  module _ {ac : A → C} {bc : B → C}
-    where
-    P = pullback A B ac bc
-
-    open Square.Commutative {A = P} pr₁ (pr₁ ∘ pr₂) ac bc (pr₂ ∘ pr₂)
-
-    prop : IsPullback {i}
-    prop X = qinv→isequiv (map⁻¹ , α , β)
-      where
-      map⁻¹ : pullback (X → A) (X → B) (ac ∘_) (bc ∘_) → (X → P)
-      map⁻¹ (h' , k' , p) x = h' x , k' x , happly p x
-      α : map ∘ map⁻¹ ~ id
-      α (_ , _ , p) = pair⁼ (refl , pair⁼ (refl , Π-identity-η p))
-      β : map⁻¹ ∘ map ~ id
-      β xp = funext λ x → pair⁼ (refl , pair⁼ (refl ,
-        happly (Π-identity-β (pr₂ ∘ pr₂ ∘ xp)) x))
+import HoTT.Exercises.Chapter2.Exercise12
 
 module Exercise13
   where
-  open import HoTT.Boolean
   open import HoTT.Equivalence
-  open import HoTT.Pi.Identity
-  open import HoTT.Sigma.Identity
   open import HoTT.Equivalence.Proposition
+  open import HoTT.Identity.Pi
+  open import HoTT.Identity.Sigma
 
   not : 𝟐 → 𝟐
-  not = 𝟐-rec 𝟐 1₂ 0₂
+  not = 𝟐-rec 1₂ 0₂
 
   -- There are two possibilities for 𝟐 ≃ 𝟐, id and not. In our
   -- equivalence (𝟐 ≃ 𝟐) ≃ 𝟐, we associate `id` with 0₂, and `not`
@@ -296,14 +242,13 @@ module Exercise13
   -- and f 0₂ = 1₂ when f is not, so we can use f 0₂ in the forward
   -- direction.
   _ : (𝟐 ≃ 𝟐) ≃ 𝟐
-  _ = to , qinv→isequiv (from , α , β)
+  _ = to , qinv→isequiv (from , β , α)
     where
     to : 𝟐 ≃ 𝟐 → 𝟐
-    to e = (pr₁ e) 0₂
+    to (f , _) = f 0₂
     from : 𝟐 → 𝟐 ≃ 𝟐
-    from = 𝟐-rec _
-      (id , qinv→isequiv (id , (λ _ → refl) , λ _ → refl))
-      (not , qinv→isequiv (not , 𝟐-ind _ refl refl , 𝟐-ind _ refl refl))
+    from 0₂ = id , qinv→isequiv (id , (λ _ → refl) , λ _ → refl)
+    from 1₂ = not , qinv→isequiv (not , 𝟐-ind _ refl refl , 𝟐-ind _ refl refl)
     -- The first homotopy is easy, we just do 𝟐-induction on the
     -- input to determine whether we have `id` or `not`. Once we
     -- know that, it is just a matter of showing 0₂ = 0₂ or 1₂ = 1₂,
@@ -321,19 +266,18 @@ module Exercise13
     -- proofs together with the equivalence inverse function and
     -- homotopy to show the desired behavior of f.
     β : from ∘ to ~ id
-    β e = let f = pr₁ e
-              h = pr₁ (pr₂ (pr₂ e))
-              H = pr₂ (pr₂ (pr₂ e)) in
+    β (f , e) =
       pair⁼ (𝟐-ind (λ x → x == f 0₂ → pr₁ (from x) == f)
         (λ p → 𝟐-ind (λ x → x == f 1₂ → id == f)
-          (λ q → funext (𝟐-ind _ p (H 1₂ ⁻¹ ∙ ap h (q ⁻¹ ∙ p) ∙ H 0₂ ∙ q)))
+          (λ q → funext (𝟐-ind _ p (η 1₂ ⁻¹ ∙ ap g (q ⁻¹ ∙ p) ∙ η 0₂ ∙ q)))
           (λ q → funext (𝟐-ind _ p q))
           (f 1₂) refl)
         (λ p → 𝟐-ind (λ x → x == f 1₂ → not == f)
           (λ q → funext (𝟐-ind _ p q))
-          (λ q → funext (𝟐-ind _ p (H 0₂ ⁻¹ ∙ ap h (p ⁻¹ ∙ q) ∙ H 1₂ ∙ q)))
+          (λ q → funext (𝟐-ind _ p (η 0₂ ⁻¹ ∙ ap g (p ⁻¹ ∙ q) ∙ η 1₂ ∙ q)))
           (f 1₂) refl)
-        (f 0₂) refl , isequiv-isProp _ _)
+        (f 0₂) refl , isequiv-prop _ _)
+      where open qinv (isequiv→qinv e)
 
 module Exercise14 {i} {A : 𝒰 i} {x : A}
   where
@@ -354,56 +298,68 @@ module Exercise14 {i} {A : 𝒰 i} {x : A}
   -- applying the equality reflection rule again, we arrive at the
   -- desired definitional equality, p ≡ reflₓ.
 
-module Exercise15 {i} {A : 𝒰 i} {B : A → 𝒰 i} {x y : A} {p : x == y} {u : B x}
+module Exercise15 {i j} {A : 𝒰 i} {B : A → 𝒰 j} {x y : A} {p : x == y} {u : B x}
   where
-  open import HoTT.Universe.Identity
+  _ : transport _ p == transport id (ap B p)
+  _ = =-ind (λ _ _ p → transport _ p == transport id (ap B p)) (λ _ → refl) p
 
-  _ : transport _ p == pr₁ (idtoeqv (ap B p))
-  _ = =-ind (λ _ _ p → transport _ p == pr₁ (idtoeqv (ap B p)))
-    (λ _ → refl) _ _ p
-
-module Exercise16
-  where
+module Exercise16 {i} {j} {A : 𝒰 i} {B : A → 𝒰 j} (f g : Π A B) where
+  open import HoTT.Identity
+  open import HoTT.Identity.Sigma
+  open import HoTT.Identity.Pi using (funext)
   open import HoTT.Equivalence
-  open import HoTT.Pi.Identity using (funext ; happly)
 
-  _ : ∀ {i} {A : 𝒰 i} {B : A → 𝒰 i} {f g : Π A B} →
-      isequiv (happly {f = f} {g})
-  _ = qinv→isequiv (funext , α , β)
+  =Π-equiv : f == g ≃ f ~ g
+  =Π-equiv = happly , qinv→isequiv (funext' , η , ε)
     where
-    -- "may require concepts from later chapters"
-    postulate
-      α : happly ∘ funext ~ id
-      β : funext ∘ happly ~ id
+    -- Define funext' in such a way that funext (happly refl) ≡
+    -- funext (λ x. refl) can cancel.
+    funext' : {g : Π A B} → f ~ g → f == g
+    funext' α = funext α ∙ funext (λ _ → refl) ⁻¹
+    η : funext' ∘ happly ~ id
+    η refl = invᵣ
+    ε : happly ∘ funext' ~ id
+    ε α = transport P p (ap happly invᵣ)
+      where
+      P : Π[ x ∶ A ] Σ[ y ∶ B x ] f x == y → 𝒰 _
+      P h = let α = pr₂ ∘ h in happly (funext' α) == α
+      -- The trick here is to use funext to simultaneously show
+      -- that λ x. (f x , refl) = λ x. (g x , α x). Then, we can
+      -- transport a path made by canceling the funext with its
+      -- inverse to get the desired equality.
+      p : (λ x → f x , refl) == (λ x → g x , α x)
+      p = funext λ x → pair⁼ (α x , =-ind (λ _ _ p → transport _ p refl == p) (λ _ → refl) (α x))
 
-module Exercise17 {i}
-  where
+module Exercise17 {i} where
   open import HoTT.Equivalence
-  open import HoTT.Product.Identity
-  open import HoTT.Universe.Identity
-  open import HoTT.Pi.Identity
+  open import HoTT.Equivalence.Proposition
+  open import HoTT.Identity.Product
+  open import HoTT.Identity.Sigma
+  open import HoTT.Identity.Universe
+  open import HoTT.Identity.Pi
 
   variable
     A A' B B' : 𝒰 i
     P : A → 𝒰 i
     P' : A' → 𝒰 i
 
-  prop : (_⊙_ : 𝒰 i → 𝒰 i → 𝒰 i) → A == A' → B == B' → (A ⊙ B) ≃ (A' ⊙ B')
-  prop {A} {A'} {B} {B'} (_⊙_) p q = transport (λ{ (A' , B') → A ⊙ B ≃ A' ⊙ B' })
-    (pair⁼ (p , q)) (idtoeqv refl)
+  prop : (_◆_ : 𝒰 i → 𝒰 i → 𝒰 i) → A == A' → B == B' → (A ◆ B) ≃ (A' ◆ B')
+  prop {A} {A'} {B} {B'} (_◆_) p q =
+    transport (λ{ (A' , B') → A ◆ B ≃ A' ◆ B' })
+      (×-pair⁼ {x = A , B} {y = A' , B'} (p , q)) reflₑ
 
   module _ (e₁ : A ≃ A') (e₂ : B ≃ B')
     where
+    open Iso (eqv→iso e₁) renaming (f to f₁ ; g to g₁ ; η to η₁ ; ε to ε₁)
+    open Iso (eqv→iso e₂) renaming (f to f₂ ; g to g₂ ; η to η₂ ; ε to ε₂)
+
     -- (i) Proof without using univalence
-    prop-×' : (A × B) ≃ (A' × B')
-    prop-×' =
-      let f₁ = pr₁ e₁ ; f₂ = pr₁ e₂
-          (g₁ , α₁ , β₁) = isequiv→qinv (pr₂ e₁)
-          (g₂ , α₂ , β₂) = isequiv→qinv (pr₂ e₂)
-      in (λ (a , b) → f₁ a , f₂ b) , qinv→isequiv
-        ( (λ (a' , b') → g₁ a' , g₂ b')
-        , (λ (a' , b') → pair⁼ (α₁ a' , α₂ b'))
-        , (λ (a , b) → pair⁼ (β₁ a , β₂ b)) )
+    prop-×' : A × B ≃ A' × B'
+    prop-×' = let open Iso in iso→eqv λ where
+      .f (a , b) → f₁ a , f₂ b
+      .g (a' , b') → g₁ a' , g₂ b'
+      .η (a , b) → ×-pair⁼ (η₁ a , η₂ b)
+      .ε (a' , b') → ×-pair⁼ (ε₁ a' , ε₂ b')
 
     -- (ii) Proof using univalence (for general operator)
     prop-× = prop _×_ (ua e₁) (ua e₂)
@@ -414,21 +370,17 @@ module Exercise17 {i}
 
   -- Proof that (i) and (ii) are equal
   propᵢ₌ᵢᵢ : (e₁ : A ≃ A') (e₂ : B ≃ B') → prop-×' e₁ e₂ == prop-× e₁ e₂
-  propᵢ₌ᵢᵢ {A} {A'} {B} {B'} e₁ e₂ = transport (λ{ (e₁ , e₂) → prop-×' e₁ e₂ == prop-× e₁ e₂ })
-    (pair⁼ (𝒰-identity-β e₁ , 𝒰-identity-β e₂))
-    (=-ind' A (λ _ p → prop-×' (idtoeqv p) (idtoeqv (ua e₂)) == prop-× (idtoeqv p) (idtoeqv (ua e₂)))
-      (=-ind' B (λ _ q → prop-×' _ (idtoeqv q) == prop-× _ (idtoeqv q))
-        (refl ∙ ap (λ (p , q) → prop _×_ p q) (pair⁼ (𝒰-identity-η refl ⁻¹ , 𝒰-identity-η refl ⁻¹)))
-        B' (ua e₂))
-      A' (ua e₁))
-
-  module _ (e₁ : A ≃ A') (e₂ : transport (λ A' → A' → 𝒰 i) (ua e₁) P ~ P')
+  propᵢ₌ᵢᵢ e₁ e₂ = ap² prop-×' (=𝒰-β e₁ ⁻¹) (=𝒰-β e₂ ⁻¹) ∙ lemma
     where
-    prop-dep : (_⊙_ : (A : 𝒰 i) → (A → 𝒰 i) → 𝒰 i) → (A ⊙ P) ≃ (A' ⊙ P')
-    prop-dep _⊙_ = =-ind' A
-      (λ A' p → (P' : A' → 𝒰 i) → transport _ p P ~ P' → (A ⊙ P) ≃ (A' ⊙ P'))
-      (λ P' q → =-ind' P (λ P' _ → A ⊙ P ≃ A ⊙ P') (idtoeqv refl) P' (funext q))
-      A' (ua e₁) P' e₂
+    lemma : prop-×' (idtoeqv (ua e₁)) (idtoeqv (ua e₂)) == prop-× e₁ e₂
+    lemma rewrite ua e₁ rewrite ua e₂ =
+      pair⁼ (funext (λ{ (a , b) → refl }) , isequiv-prop _ _)
+
+  module _ (e₁ : A ≃ A') (e₂ : (x : A') → transport (λ A' → A' → 𝒰 i) (ua e₁) P x ≃ P' x)
+    where
+    prop-dep : (_◆_ : (A : 𝒰 i) → (A → 𝒰 i) → 𝒰 i) → (A ◆ P) ≃ (A' ◆ P')
+    prop-dep _◆_ = transport (λ{ (A' , P') → A ◆ P ≃ A' ◆ P' })
+      (pair⁼ {x = A , P} {y = A' , P'} (ua e₁ , funext (ua ∘ e₂))) reflₑ
 
     -- (iii) Proof for dependent type formers (Σ, Π)
     prop-Σ = prop-dep Σ
@@ -448,6 +400,5 @@ module Exercise18 {i} {A : 𝒰 i} {B : A → 𝒰 i} {f g : Π A B} {H : f ~ g}
   -- Now, we just need one final induction on H x, after which our goal
   -- reduces to refl : refl = refl.
   _ : ap (transport _ p) (H x) ∙ apd g p == apd f p ∙ H y
-  _ = =-ind' x (λ y p → ap (transport _ p) (H x) ∙ apd g p == apd f p ∙ H y)
-    (=-ind' (f x) (λ _ Hₓ → ap id Hₓ ∙ refl == refl ∙ Hₓ) refl (g x) (H x))
-    y p
+  _ = =-ind' (λ y p → ap (transport _ p) (H x) ∙ apd g p == apd f p ∙ H y)
+    (=-ind' (λ _ Hₓ → ap id Hₓ ∙ refl == refl ∙ Hₓ) refl (H x)) p

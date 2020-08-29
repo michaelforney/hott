@@ -1,15 +1,40 @@
 {-# OPTIONS --without-K #-}
 module HoTT.NaturalNumber where
 
-open import HoTT.Types
+open import HoTT.Base renaming (_+_ to _⊎_)
+open import HoTT.Identity
 
-ℕ-rec : ∀ {i} (C : 𝒰 i) → C → (ℕ → C → C) → ℕ → C
-ℕ-rec C c₀ cₛ 0 = c₀
-ℕ-rec C c₀ cₛ (succ n) = cₛ n (ℕ-rec C c₀ cₛ n)
+private variable n m : ℕ
 
-ℕ-ind : ∀ {i} (C : ℕ → 𝒰 i) → C 0 → ((n : ℕ) → C n → C (succ n)) → (n : ℕ) → C n
-ℕ-ind C c₀ cₛ 0 = c₀
-ℕ-ind C c₀ cₛ (succ n) = cₛ n (ℕ-ind C c₀ cₛ n)
+_+_ : ℕ → ℕ → ℕ
+0 + m = m
+succ n + m = succ (n + m)
 
-add : ℕ → ℕ → ℕ
-add = ℕ-rec (ℕ → ℕ) id λ{_ g m → succ (g m)}
++-comm : (n m : ℕ) → n + m == m + n
++-comm zero zero = refl
++-comm zero (succ m) = ap succ (+-comm zero m)
++-comm (succ n) zero = ap succ (+-comm n zero)
++-comm (succ n) (succ m) = ap succ $
+  n + succ m   =⟨ +-comm n (succ m) ⟩
+  succ m + n   =⟨ ap (succ) (+-comm m n) ⟩
+  succ (n + m) =⟨ +-comm (succ n) m ⟩
+  m + succ n   ∎
+  where open =-Reasoning
+
+_≤_ : ℕ → ℕ → 𝒰₀
+n ≤ m = Σ ℕ λ k → n + k == m
+
+≤succ : n ≤ m → n ≤ succ m
+≤succ {n} (k , p) = succ k , +-comm n (succ k) ∙ ap succ (+-comm k n ∙ p)
+
+_<_ : ℕ → ℕ → 𝒰₀
+n < m = succ n ≤ m
+
+_<=>_ : (n m : ℕ) → (n == m) ⊎ (n < m) ⊎ (m < n)
+zero <=> zero = inl refl
+zero <=> succ m = inr (inl (m , refl))
+succ n <=> zero = inr (inr (n , refl))
+succ n <=> succ m with n <=> m
+... | inl p = inl (ap succ p)
+... | inr (inl (k , p)) = inr (inl (k , ap succ p))
+... | inr (inr (k , p)) = inr (inr (k , ap succ p))

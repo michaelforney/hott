@@ -1,118 +1,108 @@
 {-# OPTIONS --without-K #-}
+open import HoTT.Base
+
 module HoTT.Identity where
 
-open import HoTT.Types
-open import HoTT.Empty using (¬_)
-
-=-ind : ∀ {i j} {A : 𝒰 i} →
-        (C : (x y : A) → x == y → 𝒰 j) → ((x : A) → C x x refl) → (x y : A) → (p : x == y) → C x y p
-=-ind C c x .x refl = c x
-
--- Based path induction
-=-ind' : ∀ {i j} {A : 𝒰 i} →
-         (a : A) → (C : (x : A) → a == x → 𝒰 j) → C a refl → (x : A) → (p : a == x) → C x p
-=-ind' a C c .a refl = c
-
-_≠_ : ∀ {i} {A : 𝒰 i} → A → A → 𝒰 i
-_≠_ x y = ¬ (x == y)
-
--- Lemma 2.1.1
-_⁻¹ : ∀ {i} {A : 𝒰 i} {x y : A} → x == y → y == x
-_⁻¹ refl = refl
-infix 30 _⁻¹
-
-{- Induction proof
-_⁻¹ {i} {A} {x} {y} p = =-ind D d x y p
-  where
-    D : (x y : A) → x == y → 𝒰 i
-    D x y p = y == x
-    d : (x : A) → D x x refl
-    d x = refl
--}
-
--- Lemma 2.1.2
-_∙_ : ∀ {i} {A : 𝒰 i} {x y z : A} → x == y → y == z → x == z
-_∙_ refl refl = refl
-infixl 20 _∙_
-
-{- Induction proof
-_∙_ {i} {A} {x} {y} {z} p q = =-ind D d x y p z q where
-  E : (x z : A) (q : x == z) → 𝒰 i
-  E x z q = x == z
-  e : (x : A) → E x x refl
-  e x = refl
-  D : (x y : A) → x == y → 𝒰 i
-  D x y p = (z : A) (q : y == z) → x == z
-  d : (x : A) → D x x refl
-  d x z q = =-ind E e x z q
--}
+open variables
+private variable x y z w : A
 
 -- Lemma 2.1.4
 --  (i)
-ru : ∀ {i} {A : 𝒰 i} {x y : A} (p : x == y) → p == p ∙ refl
-ru {x = x} {y} p = =-ind (λ _ _ p → p == p ∙ refl) (λ _ → refl) x y p
+unitᵣ : {p : x == y} → p == p ∙ refl
+unitᵣ {p = refl} = refl
 
-lu : ∀ {i} {A : 𝒰 i} {x y : A} (p : x == y) → p == refl ∙ p
-lu {x = x} {y} p = =-ind (λ _ _ p → p == refl ∙ p) (λ _ → refl) x y p
+unitₗ : {p : x == y} → p == refl ∙ p
+unitₗ {p = refl} = refl
 
 --  (ii)
-=-linv : ∀ {i} {A : 𝒰 i} {x y : A} (p : x == y) → p ⁻¹ ∙ p == refl
-=-linv {x = x} {y} p = =-ind (λ _ _ p → p ⁻¹ ∙ p == refl) (λ _ → refl) x y p
+invₗ : {p : x == y} → p ⁻¹ ∙ p == refl
+invₗ {p = refl} = refl
 
-=-rinv : ∀ {i} {A : 𝒰 i} {x y : A} (p : x == y) → p ∙ p ⁻¹ == refl
-=-rinv {x = x} {y} p = =-ind (λ _ _ p → p ∙ p ⁻¹ == refl) (λ _ → refl) x y p
+invᵣ : {p : x == y} → p ∙ p ⁻¹ == refl
+invᵣ {p = refl} = refl
 
 --  (iv)
-assoc : ∀ {i} {A : 𝒰 i} {x y z w : A} (p : x == y) (q : y == z) (r : z == w) →
+assoc : {p : x == y} {q : y == z} {r : z == w} →
         p ∙ (q ∙ r) == (p ∙ q) ∙ r
-assoc refl refl refl = refl
+assoc {p = refl} {refl} {refl} = refl
 
-{- Induction proof
-assoc {i} {A} {x} {y} {z} {w} p q r = =-ind D₁ d₁ x y p z w q r where
-  D₃ : (z w : A) → (r : z == w) → 𝒰 i
-  D₃ _ _ r = refl ∙ (refl ∙ r) == (refl ∙ refl) ∙ r
-  d₃ : (z : A) → D₃ z z refl
-  d₃ _ = refl
+invinv : {p : x == y} → p ⁻¹ ⁻¹ == p
+invinv {p = refl} = refl
 
-  D₂ : (y z : A) → (q : y == z) → 𝒰 i
-  D₂ _ z q = (w : A) → (r : z == w) → refl ∙ (q ∙ r) == (refl ∙ q) ∙ r
-  d₂ : (z : A) → D₂ z z refl
-  d₂ z w r = =-ind D₃ d₃ z w r
+-- Whiskering
+_∙ᵣ_ : {p q : x == y} (α : p == q) (r : y == z) → p ∙ r == q ∙ r
+refl ∙ᵣ refl = refl
+infixl 25 _∙ᵣ_
 
-  D₁ : (x y : A) → (p : x == y) → 𝒰 i
-  D₁ _ y p = (z w : A) → (q : y == z) → (r : z == w) → p ∙ (q ∙ r) == (p ∙ q) ∙ r
-  d₁ : (y : A) → D₁ y y refl
-  d₁ y z w q r = =-ind D₂ d₂ y z q w r
--}
+_∙ₗ_ : {r s : y == z} (q : x == y) (β : r == s) → q ∙ r == q ∙ s
+refl ∙ₗ refl = refl
+infixl 25 _∙ₗ_
 
--- Lemma 2.2.1
-ap : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} {x y : A}
-     (f : A → B) → x == y → f x == f y
-ap f refl = refl
+-- Horizontal composition
+_⋆_ : {p q : x == y} {r s : y == z} → (p == q) → (r == s) → p ∙ r == q ∙ s
+refl ⋆ refl = refl
 
-{- Induction proof
-ap {x = x} {y} f p = =-ind (λ x y _ → f x == f y) (λ _ → refl) x y p
--}
+cancelᵣ : {p q : x == y} {r : y == z} (α : p ∙ r == q ∙ r) → p == q
+cancelᵣ {r = refl} α = unitᵣ ∙ α ∙ unitᵣ ⁻¹
 
--- Lemma 2.3.1
-transport : ∀ {i j} {A : 𝒰 i} {x y : A} (P : A → 𝒰 j) →
-            x == y → P x → P y
-transport _ refl = id
+cancelₗ : {r s : y == z} {q : x == y} (β : q ∙ r == q ∙ s) → r == s
+cancelₗ {q = refl} β = unitₗ ∙ β ∙ unitₗ ⁻¹
 
-{- Induction proof
-transport {P = P} {x} {y} p = =-ind (λ x y _ → P x → P y) (λ _ → id) x y p
--}
+pivotᵣ : {p : x == y} {q : y == z} {r : x == z} → p ∙ q == r → p == r ∙ q ⁻¹
+pivotᵣ {p = refl} {q = refl} α = α ∙ unitᵣ
 
--- Lemma 2.3.4
-apd : ∀ {i j} {A : 𝒰 i} {P : A → 𝒰 j} {x y : A}
-      (f : (x : A) → P x) (p : x == y) → transport _ p (f x) == f y
-apd f refl = refl
+pivotₗ : {p : x == y} {q : y == z} {r : x == z} → p ∙ q == r → q == p ⁻¹ ∙ r
+pivotₗ {p = refl} {q = refl} α = α ∙ unitₗ
 
-{- Induction proof
-apd {x = x} {y} f p = =-ind (λ x y p → transport p (f x) == f y) (λ _ → refl) x y p
--}
+-- Lemma 2.2.2
+--  (i)
+ap-∙ : (f : A → B) (p : x == y) (q : y == z) → ap f (p ∙ q) == ap f p ∙ ap f q
+ap-∙ _ refl refl = refl
+
+--  (ii)
+ap-inv : (f : A → B) (p : x == y) → ap f (p ⁻¹) == ap f p ⁻¹
+ap-inv _ refl = refl
+
+--  (iii)
+ap-∘ : {C : 𝒰 i} (f : B → C) (g : A → B) (p : x == y) → ap (f ∘ g) p == ap f (ap g p)
+ap-∘ _ _ refl = refl
+
+--  (iv)
+ap-id : (p : x == y) → ap id p == p
+ap-id refl = refl
+
+ap-const : (p : x == y) → ap (const B) p == refl
+ap-const refl = refl
 
 -- Lemma 2.3.5
-transportconst : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} {x y : A}
-                 (p : x == y) (b : B) → transport _ p b == b
+transportconst : (p : x == y) → transport (const B) p ~ id
 transportconst refl _ = refl
+
+-- Lemma 2.3.9
+transport-∙ : (P : A → 𝒰 i) (p : x == y) (q : y == z) →
+              transport P (p ∙ q) ~ transport P q ∘ transport P p
+transport-∙ P refl refl _ = refl
+
+-- Lemma 2.3.10
+transport-ap : (P : B → 𝒰 i) (f : A → B) {x y : A} (p : x == y) →
+               transport P (ap f p) ~ transport (P ∘ f) p
+transport-ap _ _ refl _ = refl
+
+-- Lemma 2.3.11
+transport-∘ : (f : {x : A} → P x → Q x) (p : x == y) →
+              transport Q p ∘ f ~ f ∘ transport P p
+transport-∘ _ refl _ = refl
+
+module =-Reasoning {i} {A : 𝒰 i}
+  where
+  _=⟨_⟩_ : (x : A) {y z : A} → x == y → y == z → x == z
+  x =⟨ p ⟩ q = p ∙ q
+  infixr 2 _=⟨_⟩_
+
+  _=⟨⟩_ : (x : A) {y : A} → x == y → x == y
+  _ =⟨⟩ p = p
+  infixr 2 _=⟨⟩_
+
+  _∎ : (x : A) → x == x
+  _ ∎ = refl
+  infix 3 _∎

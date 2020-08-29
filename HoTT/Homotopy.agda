@@ -1,18 +1,28 @@
 {-# OPTIONS --without-K #-}
-module HoTT.Homotopy where
-
-open import HoTT.Types
+open import HoTT.Base
 open import HoTT.Identity
 
--- Lemma 2.4.2
-~-refl : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j}
-         (f : A → B) → f ~ f
-~-refl f x = refl
+module HoTT.Homotopy where
 
-~-sym : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} {f g : A → B} →
-        f ~ g → g ~ f
-~-sym H x = (H x)⁻¹
+open variables
+private variable f g : A → B
 
-~-trans : ∀ {i j} {A : 𝒰 i} {B : 𝒰 j} {f g h : A → B} →
-          f ~ g → g ~ h → f ~ h
-~-trans H₁ H₂ x = H₁ x ∙ H₂ x
+-- Lemma 2.4.3
+~-natural : (α : f ~ g) {x y : A} (p : x == y) → α x ∙ ap g p == ap f p ∙ α y
+~-natural α {x} refl rewrite α x = refl
+
+~-natural-id : (α : f ~ id) {x y : A} (p : x == y) → α x ∙ p == ap f p ∙ α y
+~-natural-id α {x} refl rewrite α x = refl
+
+-- Corollary 2.4.4
+~-natural-comm : {f : A → A} (α : f ~ id) → α ∘ f ~ ap f ∘ α
+~-natural-comm {f = f} α x = cancelᵣ (α (f x) ∙ₗ ap-id (α x) ⁻¹ ∙ ~-natural α (α x))
+
+module ~-Reasoning where
+  _~⟨_⟩_ : (f : Π A P) {g h : Π A P} → f ~ g → g ~ h → f ~ h
+  x ~⟨ α ⟩ β = α ∙ₕ β
+  infixr 2 _~⟨_⟩_
+
+  _∎ : (f : Π A P) → f ~ f
+  _ ∎ = reflₕ
+  infix 3 _∎
