@@ -28,7 +28,7 @@ open variables
 Σ-equiv₂ {A = A} {P = P} {Q = Q} e = iso→eqv iso
   where
   iso : Iso (Σ A P) (Σ A Q)
-  Iso.f iso (a , b) = a , pr₁ (e a) b
+  Iso.f iso x = let (a , b) = x in a , pr₁ (e a) b
   Iso.g iso (a , b') = a , g b'
     where open qinv (isequiv→qinv (pr₂ (e a)))
   Iso.η iso (a , b) = pair⁼ (refl , η b)
